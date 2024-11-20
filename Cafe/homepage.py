@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import os
+import random
+import datetime
 
 # Function to calculate and update loyalty points based on order total
 def update_loyalty_points():
@@ -23,7 +25,6 @@ def load_active_coupons():
     coupons_df = pd.read_csv('coupons.csv') if os.path.exists('coupons.csv') else pd.DataFrame(columns=["Coupon Code", "Discount (%)", "Expiration Date", "Active"])
     return coupons_df[coupons_df['Active'] == True]  # Return only active coupons
 
-# Function to display the homepage
 def display_homepage():
     st.title("Homepage")
 
@@ -45,7 +46,52 @@ def display_homepage():
     </div>
     """, unsafe_allow_html=True)
 
-    # Show active coupons with a beautiful design
+    # Redeem voucher section
+    st.markdown("<hr>", unsafe_allow_html=True)
+    st.subheader("🎁 Redeem a Voucher")
+
+    voucher_options = {
+        "5% Off (10 Points)": {"discount": 5, "required_points": 10},
+        "10% Off (100 Points)": {"discount": 10, "required_points": 100},
+        "15% Off (150 Points)": {"discount": 15, "required_points": 150}
+    }
+
+    available_vouchers = {
+        k: v for k, v in voucher_options.items() if st.session_state["loyalty_points"] >= v["required_points"]
+    }
+
+    if available_vouchers:
+        selected_voucher = st.selectbox(
+            "Select a voucher to redeem",
+            options=list(available_vouchers.keys())
+        )
+
+        if st.button("Redeem Voucher"):
+            voucher_details = available_vouchers[selected_voucher]
+            st.session_state["loyalty_points"] -= voucher_details["required_points"]
+
+            # Save the redeemed voucher as an active coupon
+            # Save the redeemed voucher as an active coupon
+            new_coupon = {
+                "Coupon Code": f"{selected_voucher.split()[0].upper()}-{random.randint(1000, 9999)}",
+                "Discount (%)": voucher_details["discount"],
+                "Expiration Date": (datetime.datetime.now() + datetime.timedelta(days=30)).strftime('%Y-%m-%d'),
+                "Active": True
+            }
+
+            # Update coupons.csv
+            coupons_df = pd.read_csv('coupons.csv') if os.path.isfile('coupons.csv') else pd.DataFrame(columns=new_coupon.keys())
+            new_coupon_df = pd.DataFrame([new_coupon])  # Convert the new coupon to a DataFrame
+            coupons_df = pd.concat([coupons_df, new_coupon_df], ignore_index=True)  # Add the new coupon
+            coupons_df.to_csv('coupons.csv', index=False)  # Save the updated DataFrame back to the CSV
+
+
+            st.success(f"You have successfully redeemed a {voucher_details['discount']}% off voucher!")
+            st.write(f"🎟️ Your voucher code is: `{new_coupon['Coupon Code']}`")
+    else:
+        st.info("You don't have enough points to redeem any vouchers at the moment.")
+
+    # Show active coupons
     st.markdown("<hr>", unsafe_allow_html=True)
     st.subheader("🌟 Active Coupons Available for You!")
 
@@ -76,3 +122,6 @@ def display_homepage():
         st.session_state.clear()  # Clear session state
         st.session_state["page"] = "Sign In"  # Redirect to Sign In
         st.success("You have logged out. Redirecting to Sign In...")
+
+
+    

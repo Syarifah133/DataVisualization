@@ -21,7 +21,9 @@ def display_order_history():
     # Loop through each order and allow user to change its status
     for index, order in orders_df.iterrows():
         order_id = order['Booking Number']
-        current_status = order.get('Status', 'Preparing')  # Default status if missing
+        
+        # Check if the status is NaN and set it to 'Preparing' by default if so
+        current_status = order.get('Status', 'Preparing') if pd.notna(order.get('Status')) else 'Preparing'
 
         st.subheader(f"Order #{order_id}")
         st.write(f"**Coffee Type**: {order['Coffee Type']}")
@@ -45,4 +47,3 @@ def display_order_history():
             # Save the updated DataFrame back to CSV
             orders_df.to_csv(orders_file, index=False)
             st.success(f"Order #{order_id} status updated to {new_status}.")
-

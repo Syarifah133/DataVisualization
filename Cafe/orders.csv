@@ -1,3 +1,9 @@
 Username,Coffee Type,Size,Ice,Sugar,Add-ons,Price,Booking Number,Preparation Time (min),Order Time,Branch, Status,Status
 Syaai,Caramel Macchiato,Small,Less,Less,Whipped Cream,4.0,8634,14,2024-11-19 19:25:37,Manjung,Done,Done
 Syaai,Cappuccino,Small,Hot,No,,3.0,6914,9,2024-11-20 13:15:42,Seri Iskandar,Preparing,
+syarifah,Americano,Small,Hot,No,Milk,2.5,9160,15,2024-11-20 15:09:14,Seri Iskandar,Preparing,
+syarifah,Americano,Small,Hot,No,,2.25,1642,5,2024-11-20 15:15:56,Seri Iskandar,TEB3000,Preparing
+syarifah,Americano,Small,Hot,No,,2.25,5142,15,2024-11-20 15:19:00,Seri Iskandar,TEB3333,Preparing
+syarifah,Americano,Small,Hot,No,,2.25,1792,7,2024-11-20 15:19:19,Seri Iskandar,TEB3333,Preparing
+syarifah,Americano,Small,Hot,No,,2.25,7813,14,2024-11-20 15:20:34,Seri Iskandar,TEB3333,Preparing
+syarifah,Americano,Small,Hot,No,,2.25,2413,12,2024-11-20 15:27:27,Seri Iskandar,TEB3000,Done

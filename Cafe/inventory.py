@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import streamlit as st
 from datetime import datetime
-from utils import save_inventory, check_low_inventory, max_stock, inventory_file, inventory
+from utils import save_inventory, check_low_inventory, max_stock, inventory
 
 def update_inventory_after_sale(sale_items):
     """
@@ -27,13 +27,32 @@ def display_inventory_management():
     st.title("Inventory Management")
     st.write("### Current Inventory Levels:")
 
-    # Display inventory with progress bars
+    # Display inventory with progress bars and color coding
     for item, amount in inventory.items():
         max_amount = max_stock[item]
         stock_ratio = min(amount / max_amount, 1.0)
-        status = "Low Stock" if stock_ratio <= 0.2 else "Medium Stock" if stock_ratio <= 0.5 else "High Stock"
-        st.write(f"**{item.capitalize()}** ({status}): {amount}/{max_amount}")
-        st.progress(stock_ratio)
+        
+        # Determine stock status and progress bar color
+        if stock_ratio <= 0.2:
+            status = "Low Stock"
+            progress_color = "red"
+        elif stock_ratio <= 0.5:
+            status = "Medium Stock"
+            progress_color = "orange"
+        else:
+            status = "High Stock"
+            progress_color = "green"
+        
+        # Display item with progress bar
+        st.markdown(f"<p style='font-weight: bold;'>{item.capitalize()} ({status}): {amount}/{max_amount}</p>", unsafe_allow_html=True)
+
+        # Custom Progress Bar with Color
+        progress_html = f"""
+        <div style="background-color: #e0e0e0; border-radius: 5px; height: 20px; width: 100%;">
+            <div style="background-color: {progress_color}; height: 100%; width: {stock_ratio*100}%; border-radius: 5px;"></div>
+        </div>
+        """
+        st.markdown(progress_html, unsafe_allow_html=True)
 
     # Low inventory alerts
     st.subheader("Restock Alerts")
@@ -42,7 +61,7 @@ def display_inventory_management():
     if low_items:
         st.write("Items that need restocking:")
         for item in low_items:
-            st.markdown(f"- **{item.capitalize()}**")
+            st.markdown(f"- <span style='color:red;'>{item.capitalize()}</span>", unsafe_allow_html=True)
     else:
         st.write("All items are well-stocked.")
 
@@ -53,7 +72,7 @@ def display_inventory_management():
     if low_stock_items:
         st.write("The following items need restocking:")
         for item, quantity in low_stock_items.items():
-            st.write(f"- **{item.capitalize()}**: {quantity}/{max_stock[item]}")
+            st.markdown(f"- <span style='color:red;'>{item.capitalize()}: {quantity}/{max_stock[item]}</span>", unsafe_allow_html=True)
     else:
         st.write("No items need restocking at the moment.")
 

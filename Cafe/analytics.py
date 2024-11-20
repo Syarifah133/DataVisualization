@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import streamlit as st
+from datetime import datetime
 
 # Define the path to your orders and inventory files
 orders_file = 'orders.csv'
@@ -15,7 +16,6 @@ max_stock = {
 }
 
 # Assuming inventory data is stored in a dictionary
-# This should be replaced with actual inventory data reading logic
 inventory = {
     'coffee beans': 60,
     'milk': 20,
@@ -37,6 +37,18 @@ def check_low_inventory():
         if stock_ratio <= 0.2:  # If stock is below 20% of max stock
             low_inventory_items.append(item)
     return low_inventory_items
+
+# Custom function to render a progress bar with color
+def colored_progress_bar(ratio, color):
+    """ Renders a colored progress bar using HTML and CSS """
+    st.markdown(
+        f"""
+        <div style="background-color: #f0f0f0; border-radius: 5px; width: 100%; height: 20px;">
+            <div style="background-color: {color}; width: {ratio * 100}%; height: 100%; border-radius: 5px;"></div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 def display_analytics_dashboard():
     st.title("Analytics Dashboard")
@@ -61,11 +73,19 @@ def display_analytics_dashboard():
     st.line_chart(revenue_by_week)
 
     # Real-Time Monitoring: Current Orders and Sales
-    st.subheader("Current Orders & Sales")
-    current_sales = orders_df.tail(10)  # Show last 10 orders
-    st.dataframe(current_sales[['Order Time', 'Coffee Type', 'Price']])
+    with st.expander("Current Orders & Sales", expanded=True):
+        st.subheader("Orders in 'Preparing' Status")
+
+        # Filter the orders that are in "Preparing" status
+        preparing_orders = orders_df[orders_df['Status'] == 'Preparing']
+        
+        if preparing_orders.empty:
+            st.info("No orders are currently in 'Preparing' status.")
+        else:
+            st.dataframe(preparing_orders[['Order Time', 'Coffee Type', 'Price', 'Status']])
 
     # Real-Time Sales Summary
+    st.markdown("### Real-Time Sales Summary")
     total_sales = orders_df['Price'].sum()
     total_orders = len(orders_df)
     st.markdown(f"**Total Sales Revenue:** ${total_sales:.2f}")
@@ -81,11 +101,27 @@ def display_analytics_dashboard():
         st.success("All inventory levels are healthy.")
 
     # Show Current Inventory Levels
-    st.subheader("Current Inventory Levels")
-    for item, amount in inventory.items():
-        max_amount = max_stock[item]
-        stock_ratio = min(amount / max_amount, 1.0)
-        status = "Low Stock" if stock_ratio <= 0.2 else "Medium Stock" if stock_ratio <= 0.5 else "High Stock"
-        st.write(f"**{item.capitalize()}**: {amount}/{max_amount} ({status})")
-        st.progress(stock_ratio)
+    with st.expander("Current Inventory Levels", expanded=True):
+        st.subheader("Inventory Levels")
 
+        for item, amount in inventory.items():
+            max_amount = max_stock[item]
+            stock_ratio = min(amount / max_amount, 1.0)
+            status = "Low Stock" if stock_ratio <= 0.2 else "Medium Stock" if stock_ratio <= 0.5 else "High Stock"
+            
+            # Color logic for progress bar
+            color = 'red' if stock_ratio <= 0.2 else 'orange' if stock_ratio <= 0.5 else 'green'
+            st.write(f"**{item.capitalize()}**: {amount}/{max_amount} ({status})")
+            
+            # Displaying the colored progress bar
+            colored_progress_bar(stock_ratio, color)
+
+    # Display the order status options
+    st.subheader("Update Order Status")
+    order_id = st.number_input("Enter Order ID to Update", min_value=1)
+    if order_id:
+        new_status = st.selectbox("Select New Order Status", ['Preparing', 'Ready for Pickup', 'Done'])
+        if st.button("Update Status"):
+            orders_df.loc[orders_df['Booking Number'] == order_id, 'Status'] = new_status
+            orders_df.to_csv(orders_file, index=False)
+            st.success(f"Order #{order_id} status updated to {new_status}.")
