@@ -20,6 +20,7 @@ def user_sign_in(username, password):
 
     # Check for admin account (default credentials)
     if username == "admin" and password == "admin":
+        st.session_state["user_type"] = "admin" 
         return "Admin"  # Special role for admin access
 
     # Check if the username exists in the user database
@@ -47,8 +48,8 @@ def display_sign_in():
             if role:
                 st.session_state["username"] = username
                 if role == "Admin":
-                    st.session_state["page"] = "Sales"
-                    st.success("Redirecting to Sales Page...")
+                    st.session_state["page"] = "Admin"
+                    st.success("Redirecting to Admin Page...")
                 else:
                     st.session_state["page"] = "Order"
                     st.success("Redirecting to Order Page...")

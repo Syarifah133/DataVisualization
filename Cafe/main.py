@@ -1,13 +1,16 @@
 import streamlit as st
+from admin import display_admin_page
 from getStarted import display_get_started
 from signin import display_sign_in
 from signUp import display_sign_up
 from order import display_order_page
-from sale import display_sales_page
 
 # Initialize session state
 if "page" not in st.session_state:
     st.session_state["page"] = "Get Started"
+
+if "user_type" not in st.session_state:
+    st.session_state["user_type"] = None  # Initialize user type as None
 
 # Navigation
 if st.session_state["page"] == "Get Started":
@@ -22,11 +25,7 @@ elif st.session_state["page"] == "Order":
     else:
         st.error("Please sign in first!")
         st.session_state["page"] = "Sign In"
-        
-elif st.session_state["page"] == "Sales":
-    if "username" in st.session_state:
-        display_sales_page(st.session_state["username"])
-    else:
-        st.error("Please sign in first!")
-        st.session_state["page"] = "Sign In"
-        
+elif st.session_state["page"] == "Admin":
+    if st.session_state["user_type"] == "admin":
+        display_admin_page()
+
