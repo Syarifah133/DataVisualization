@@ -1,7 +1,5 @@
 import streamlit as st
-import random
 import pandas as pd
-from datetime import datetime
 import os
 
 # Function to calculate and update loyalty points based on order total
@@ -19,6 +17,11 @@ def update_loyalty_points():
     # Each $1 spent gives 1 loyalty point
     loyalty_points = int(total_spent)
     st.session_state["loyalty_points"] = loyalty_points
+
+# Function to load active coupons
+def load_active_coupons():
+    coupons_df = pd.read_csv('coupons.csv') if os.path.exists('coupons.csv') else pd.DataFrame(columns=["Coupon Code", "Discount (%)", "Expiration Date", "Active"])
+    return coupons_df[coupons_df['Active'] == True]  # Return only active coupons
 
 # Function to display the homepage
 def display_homepage():
@@ -42,26 +45,32 @@ def display_homepage():
     </div>
     """, unsafe_allow_html=True)
 
-    # Daily Special Offers in a Beautiful Box
-    offers = [
-        "Buy 1 Get 1 Free on Cappuccinos",
-        "20% Off All Lattes",
-        "Free Extra Shot with Americano",
-        "Free Whipped Cream Topping on Caramel Macchiato"
-    ]
-    daily_offer = offers[datetime.now().weekday() % len(offers)]  # Rotate offers daily
-
-    # Add some spacing and visuals for a nicer design
+    # Show active coupons with a beautiful design
     st.markdown("<hr>", unsafe_allow_html=True)
-    # Beautiful box for Daily Special Offer
-    st.markdown(f"""
-    <div style="background-color: #ffebcd; padding: 20px; border-radius: 10px; text-align: center; border: 2px solid #ff9800;">
-        <h3 style="color: #ff9800; font-size: 24px;">🎉 **Today's Special Offer**</h3>
-        <p style="font-size: 20px; color: #555;">{daily_offer}</p>
-    </div>
-    """, unsafe_allow_html=True)
+    st.subheader("🌟 Active Coupons Available for You!")
 
-    # # Logout Button
+    active_coupons = load_active_coupons()
+    if not active_coupons.empty:
+        for _, row in active_coupons.iterrows():
+            coupon_code = row['Coupon Code']
+            discount = row['Discount (%)']
+            expiration_date = row['Expiration Date']
+
+            # Beautiful box for each coupon
+            st.markdown(f"""
+            <div style="background-color: #e0f7fa; padding: 20px; margin-bottom: 15px; border-radius: 10px; border-left: 5px solid #009688;">
+                <h4 style="color: #00796b; font-size: 22px;">🎟️ <strong>{coupon_code}</strong></h4>
+                <p style="font-size: 18px; color: #00796b;">**Discount**: {discount}% Off</p>
+                <p style="font-size: 16px; color: #444;">**Expires On**: {expiration_date}</p>
+                <div style="font-size: 18px; color: #388e3c;">
+                    <strong>Active</strong> ✔️
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+    else:
+        st.info("No active coupons available right now.")
+
+    # Logout Button
     st.markdown("<hr>", unsafe_allow_html=True)
     if st.button("Log Out"):
         st.session_state.clear()  # Clear session state

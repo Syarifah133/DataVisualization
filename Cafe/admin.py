@@ -3,6 +3,7 @@ from inventory import display_inventory_management
 from sales_page import display_sales_reporting
 from analytics import display_analytics_dashboard
 from order_history import display_order_history
+from coupon import display_promotions_page  # Import the promotions functionality
 
 # Function to clear session state and log the user out
 def logout():
@@ -19,7 +20,7 @@ def display_admin_page():
     
     page = st.sidebar.selectbox(
         "Navigate to:",
-        ["Order History", "Inventory Management", "Sales Reporting", "Analytics Dashboard"]
+        ["Order History", "Inventory Management", "Sales Reporting", "Analytics Dashboard", "Promotions & Discounts"]
     )
 
     if page == "Order History":
@@ -30,6 +31,8 @@ def display_admin_page():
         display_sales_reporting()  # Correct function call
     elif page == "Analytics Dashboard":
         display_analytics_dashboard()
+    elif page == "Promotions & Discounts":
+        display_promotions_page()  # Display promotions and coupon management page
 
 # Show the login page if the user is not logged in
 def display_login_page():

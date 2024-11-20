@@ -1,6 +1,6 @@
-import streamlit as st
-import pandas as pd
 import os
+import pandas as pd
+import streamlit as st
 import datetime
 
 def display_order_history():
@@ -13,7 +13,7 @@ def display_order_history():
         st.warning("No order history found.")
         return
 
-    # Load feedback.csv
+    # Load feedback.csv (if it exists)
     feedback_df = pd.read_csv("feedback.csv") if os.path.isfile("feedback.csv") else pd.DataFrame()
 
     username = st.session_state.get("username", "Guest")
@@ -23,6 +23,7 @@ def display_order_history():
         st.warning("No orders found for your account.")
         return
 
+    # Display each order's details
     for _, order in user_orders.iterrows():
         st.subheader(f"Order #{order['Booking Number']}")
         st.write(f"**Coffee Type**: {order['Coffee Type']} - **Price**: ${order['Price']}")
@@ -30,19 +31,23 @@ def display_order_history():
         if order['Add-ons']:
             st.write(f"**Add-ons**: {order['Add-ons']}")
         st.write(f"**Order Time**: {order['Order Time']}")
+        
+        # Display the order status
+        status = order.get('Status', 'Preparing') # Use .get() to avoid KeyError
+        st.write(f"**Status**: {status}")
 
-        # Check if feedback already exists
+        # Check if feedback already exists for the current order
         existing_feedback = feedback_df[
             (feedback_df["Username"] == username) & 
             (feedback_df["Booking Number"] == order["Booking Number"])
         ]
 
         if not existing_feedback.empty:
-            # st.info("You have already rated this order.")
-            st.write(f"**Rating**: {'⭐' * int(existing_feedback.iloc[0]['Rating'])}")
-            st.info(f"**Comments**: {existing_feedback.iloc[0]['Feedback']}")
+            # If feedback already exists, display rating and comments
+            st.write(f"**Rating**: {'⭐' * int(existing_feedback.iloc[0].get('Rating', 0))}")
+            st.info(f"**Comments**: {existing_feedback.iloc[0].get('Comments', 'No comments provided')}")
         else:
-            # Rating using star buttons
+            # If no feedback exists, show rating options and comment box
             st.write("Rate this order:")
             stars = st.radio(
                 "Select Rating", [1, 2, 3, 4, 5], format_func=lambda x: "⭐" * x, key=f"rating_{order['Booking Number']}"
@@ -51,8 +56,7 @@ def display_order_history():
             submit_feedback = st.button(f"Submit Feedback for Order #{order['Booking Number']}", key=f"submit_{order['Booking Number']}")
 
             if submit_feedback:
-                # Save feedback to CSV
-                feedback = {
+                feedback_entry = {
                     "Username": username,
                     "Booking Number": order["Booking Number"],
                     "Coffee Type": order["Coffee Type"],
@@ -61,12 +65,8 @@ def display_order_history():
                     "Feedback Time": datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 }
 
-                feedback_df = pd.DataFrame([feedback])
-                if not os.path.isfile("feedback.csv"):
-                    feedback_df.to_csv("feedback.csv", index=False)
-                else:
-                    feedback_df.to_csv("feedback.csv", mode="a", header=False, index=False)
+                # Append feedback to the feedback_df and save it to the feedback.csv file
+                feedback_df = pd.concat([feedback_df, pd.DataFrame([feedback_entry])], ignore_index=True)
+                feedback_df.to_csv("feedback.csv", index=False)
 
                 st.success("Thank you for your feedback!")
-
-
