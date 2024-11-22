@@ -80,7 +80,6 @@ def generate_invoice(username, order_details, payment_method, branch, total_pric
     
     return invoice_name  # Return the valid path
 
-
 def display_payment_page(username, order_details, total_price, branch, payment_method, booking_number, prep_time):
     st.title("Payment Page")
     st.write(f"Payment Method: **{payment_method}**")
@@ -92,16 +91,20 @@ def display_payment_page(username, order_details, total_price, branch, payment_m
         # Load active coupons to check details
         active_coupons = load_active_coupons()
         discount_row = active_coupons[active_coupons['Coupon Code'] == selected_coupon]
-        discount_percentage = discount_row['Discount (%)'].values[0]
-        original_price = total_price
-        total_price *= (1 - discount_percentage / 100)
 
-        st.write(f"Coupon `{selected_coupon}` applied! Discount: {discount_percentage}%")
-        st.write(f"**Original Price:** ${original_price:.2f}")
-        st.write(f"**Price After Discount:** ${total_price:.2f}")
+        if not discount_row.empty:
+            # Coupon is valid, apply discount
+            discount_percentage = discount_row['Discount (%)'].values[0]
+            original_price = total_price
+            total_price *= (1 - discount_percentage / 100)
 
-        # Mark coupon as used
-        mark_coupon_as_used(selected_coupon)
+            st.write(f"Coupon `{selected_coupon}` applied! Discount: {discount_percentage}%")
+            st.write(f"**Original Price:** ${original_price:.2f}")
+            st.write(f"**Price After Discount:** ${total_price:.2f}")
+
+            # Mark coupon as used
+            mark_coupon_as_used(selected_coupon)
+
     else:
         st.write("No coupon applied.")
         st.write(f"**Total Price:** ${total_price:.2f}")
@@ -111,7 +114,6 @@ def display_payment_page(username, order_details, total_price, branch, payment_m
         # Simulate successful payment process
         st.success("Payment successful! Your order has been processed.")
         st.success(f"Order placed! Your booking number is {booking_number}. Estimated preparation time is {prep_time} minutes.")
-        
         
         # Generate the invoice
         invoice_path = generate_invoice(username, order_details, payment_method, branch, total_price)
@@ -129,4 +131,3 @@ def display_payment_page(username, order_details, total_price, branch, payment_m
     if st.button("Go back to Main Page"):
         st.session_state["page"] = "Homepage"
         st.rerun()
-
