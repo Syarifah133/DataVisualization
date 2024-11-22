@@ -51,8 +51,8 @@ def display_sign_in():
                     st.session_state["page"] = "Admin"
                     st.success("Redirecting to Admin Page...")
                 else:
-                    st.session_state["page"] = "Order"
-                    st.success("Redirecting to Order Page...")
+                    st.session_state["page"] = "Homepage"
+                    st.success("Redirecting to Home Page...")
 
     # Place "Don't have an account?" and Sign-Up button side by side
     col1, col2 = st.columns([0.4, 1])  # Adjust column width ratios as needed
