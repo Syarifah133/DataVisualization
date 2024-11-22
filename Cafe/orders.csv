@@ -1,4 +1,4 @@
-Username,Coffee Type,Size,Ice,Sugar,Add-ons,Price,Booking Number,Preparation Time (min),Order Time,Branch, Status,Status,Method,Redeem,Loyalty
+Username,Coffee Type,Size,Ice,Sugar,Add-ons,Price,Booking Number,Preparation Time (min),Order Time,Branch, Status,Status,Method
 Syaai,Caramel Macchiato,Small,Less,Less,Whipped Cream,4.0,8634,14,2024-11-19 19:25:37,Manjung,Done,Done
 Syaai,Cappuccino,Small,Hot,No,,3.0,6914,9,2024-11-20 13:15:42,Seri Iskandar,Preparing,
 syarifah,Americano,Small,Hot,No,Milk,2.5,9160,15,2024-11-20 15:09:14,Seri Iskandar,Preparing,
@@ -20,3 +20,6 @@ syarifah,Americano,Small,Hot,No,,2.50,7280,11,2024-11-22 10:10:44,Seri Iskandar,
 syarifah,Americano,Small,Hot,No,,2.50,4561,13,2024-11-22 10:12:34,Seri Iskandar,5%-6850,Preparing,FPX
 syarifah,Americano,Small,Hot,No,,2.50,5179,11,2024-11-22 10:13:06,Seri Iskandar,5%-2808,Preparing,FPX
 syarifah,Americano,Small,Hot,No,,2.50,8847,14,2024-11-22 10:13:40,Seri Iskandar,5%-5122,Preparing,FPX
+Nabilah,Caramel Macchiato,Small,Hot,No,,4.00,2460,7,2024-11-22 13:00:17,Seri Iskandar,No Coupons Available,Preparing,FPX
+Nabilah,Caramel Macchiato,Small,Hot,No,,4.00,6141,6,2024-11-22 13:00:32,Seri Iskandar,No Coupons Available,Preparing,FPX
+Nabilah,Caramel Macchiato,Small,Hot,No,,4.00,6643,13,2024-11-22 13:00:57,Seri Iskandar,No Coupons Available,Preparing,FPX
