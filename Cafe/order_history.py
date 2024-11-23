@@ -1,29 +1,28 @@
+# order_history.py
 import os
 import pandas as pd
 import streamlit as st
-
+from display_sidebar import add_notification
 orders_file = 'orders.csv'
 
-def display_order_history():
+
+
+# Function to display order history and allow updates
+def display_order_history(username):  # Accept the username as a parameter
     st.title("Order History")
-    
-    # Load orders.csv if it exists
+
     if os.path.isfile(orders_file):
         orders_df = pd.read_csv(orders_file)
     else:
         st.info("No orders found.")
         return
 
-    # Display order history in a table
     st.write("### Order History")
     st.dataframe(orders_df)
 
-    # Loop through each order and allow user to change its status
     for index, order in orders_df.iterrows():
         order_id = order['Booking Number']
-        
-        # Check if the status is NaN and set it to 'Preparing' by default if so
-        current_status = order.get('Status', 'Preparing') if pd.notna(order.get('Status')) else 'Preparing'
+        current_status = order['Status'] if pd.notna(order['Status']) else 'Preparing'
 
         st.subheader(f"Order #{order_id}")
         st.write(f"**Coffee Type**: {order['Coffee Type']}")
@@ -32,18 +31,33 @@ def display_order_history():
         st.write(f"**Order Time**: {order['Order Time']}")
         st.write(f"**Current Status**: {current_status}")
 
-        # Dropdown to change the order status
+        # Use a unique key for each widget by appending the order ID or index
+        selectbox_key = f"status_{order_id}_{index}"
+        button_key = f"update_{order_id}_{index}"
+
+        # Dropdown to change status
         new_status = st.selectbox(
             f"Update status for Order #{order_id}",
             ['Preparing', 'Ready for Pickup', 'Done'],
             index=['Preparing', 'Ready for Pickup', 'Done'].index(current_status),
-            key=f"status_{order_id}"
+            key=selectbox_key
         )
 
-        # If the user submits the change
         if st.button(f"Update Status for Order #{order_id}", key=f"update_{order_id}"):
+            # Debugging output
+            st.write(f"Button clicked for Order #{order_id}")  
+
             # Update the status in the DataFrame
             orders_df.loc[orders_df['Booking Number'] == order_id, 'Status'] = new_status
-            # Save the updated DataFrame back to CSV
             orders_df.to_csv(orders_file, index=False)
-            st.success(f"Order #{order_id} status updated to {new_status}.")
+
+            # If the status is updated to anything other than "Preparing", add notification
+            if new_status != 'Preparing':
+                notification_msg = f"Order #{order_id} status updated to **{new_status}**."
+                add_notification(order['Username'], notification_msg)  # Add notification for the user
+                st.success(notification_msg)
+            else:
+                st.success(notification_msg)
+
+          
+

@@ -23,8 +23,11 @@ def display_admin_page():
         ["Order History", "Inventory Management", "Sales Reporting", "Analytics Dashboard", "Promotions & Discounts"]
     )
 
+    # Pass the username to the display_order_history function
+    username = st.session_state.get('username', 'default_user')  # Fetch username from session
+
     if page == "Order History":
-        display_order_history()
+        display_order_history(username)  # Pass the username to display_order_history
     elif page == "Inventory Management":
         display_inventory_management()
     elif page == "Sales Reporting":
@@ -45,6 +48,10 @@ if __name__ == "__main__":
         st.session_state["user_type"] = None  # No user logged in initially
     if "page" not in st.session_state:
         st.session_state["page"] = "Sign In"  # Set default page to Sign In
+
+    # Add the username to the session state (simulate login process)
+    if "username" not in st.session_state:
+        st.session_state["username"] = 'admin'  # Default username, change after real login
 
     if st.session_state.user_type == 'admin':  # Check if the user is an admin
         # Admin dashboard page with logout option

@@ -1,22 +1,19 @@
 Username,Coffee Type,Size,Ice,Sugar,Add-ons,Price,Booking Number,Preparation Time (min),Order Time,Branch, Status,Status,Method
-Syaai,Caramel Macchiato,Small,Less,Less,Whipped Cream,4.0,8634,14,2024-11-19 19:25:37,Manjung,Done,Done
-Syaai,Cappuccino,Small,Hot,No,,3.0,6914,9,2024-11-20 13:15:42,Seri Iskandar,Preparing,
-syarifah,Americano,Small,Hot,No,Milk,2.5,9160,15,2024-11-20 15:09:14,Seri Iskandar,Preparing,
-syarifah,Americano,Small,Hot,No,,2.25,1642,5,2024-11-20 15:15:56,Seri Iskandar,TEB3000,Preparing
-
-syarifah,Americano,Small,Hot,No,,2.50,7168,5,2024-11-21 20:40:25,Seri Iskandar,No Coupons Available,Preparing
-syarifah,Americano,Small,Hot,No,,2.50,1006,5,2024-11-21 20:40:48,Seri Iskandar,No Coupons Available,Preparing
-
-syarifah,Americano,Small,Hot,No,,2.50,3240,13,2024-11-21 21:00:51,Seri Iskandar,No Coupons Available,Preparing
-syarifah,Americano,Small,Hot,No,,2.50,9638,14,2024-11-21 22:04:35,Seri Iskandar,No Coupons Available,Preparing,FPX
-syarifah,Americano,Small,Hot,No,,2.50,1353,10,2024-11-21 22:04:47,Seri Iskandar,No Coupons Available,Preparing,Credit/Debit Card
-syarifah,Americano,Small,Hot,No,,2.50,5352,5,2024-11-21 22:05:02,Seri Iskandar,No Coupons Available,Preparing,FPX
-syarifah,Americano,Small,Hot,No,,2.50,3524,15,2024-11-21 22:07:15,Seri Iskandar,No Coupons Available,Preparing,FPX
-syarifah,Americano,Small,Hot,No,,2.50,2570,7,2024-11-21 22:09:44,Seri Iskandar,No Coupons Available,Preparing,E-Wallet
-syarifah,Americano,Small,Hot,No,,2.50,9114,9,2024-11-21 22:13:52,Seri Iskandar,No Coupons Available,Preparing,FPX
-syarifah,Americano,Small,Hot,No,,2.50,1312,14,2024-11-21 22:15:01,Seri Iskandar,No Coupons Available,Preparing,FPX
-syarifah,Americano,Small,Hot,No,,2.50,5131,15,2024-11-21 22:16:05,Seri Iskandar,No Coupons Available,Preparing,FPX
-syarifah,Americano,Small,Hot,No,,2.50,7280,11,2024-11-22 10:10:44,Seri Iskandar,5%-2096,Preparing,FPX
-syarifah,Americano,Small,Hot,No,,2.50,4561,13,2024-11-22 10:12:34,Seri Iskandar,5%-6850,Preparing,FPX
-syarifah,Americano,Small,Hot,No,,2.50,5179,11,2024-11-22 10:13:06,Seri Iskandar,5%-2808,Preparing,FPX
-syarifah,Americano,Small,Hot,No,,2.50,8847,14,2024-11-22 10:13:40,Seri Iskandar,5%-5122,Preparing,FPX
+Syaai,Caramel Macchiato,Small,Less,Less,Whipped Cream,4.0,8634,14,2024-11-19 19:25:37,Manjung,Done,Ready for Pickup,
+Syaai,Cappuccino,Small,Hot,No,,3.0,6914,9,2024-11-20 13:15:42,Seri Iskandar,Preparing,Preparing,
+syarifah,Americano,Small,Hot,No,Milk,2.5,9160,15,2024-11-20 15:09:14,Seri Iskandar,Preparing,Done,
+syarifah,Americano,Small,Hot,No,,2.5,2462,5,2024-11-22 11:03:27,Seri Iskandar,5%-8658,Ready for Pickup,FPX
+syarifah,Americano,Small,Hot,No,,2.5,9463,6,2024-11-22 11:14:12,Seri Iskandar,5%-4912,Preparing,FPX
+syarifah,Americano,Small,Hot,No,,2.5,4154,15,2024-11-22 11:14:19,Seri Iskandar,5%-3934,Done,FPX
+syarifah,Americano,Small,Hot,No,,2.5,8172,12,2024-11-22 11:42:33,Seri Iskandar,5%-8645,Done,FPX
+syarifah,Americano,Small,Hot,No,,2.50,3519,9,2024-11-22 14:34:14,Seri Iskandar,123,Preparing,FPX
+syarifah,Americano,Small,Hot,No,,2.50,1665,6,2024-11-22 14:34:22,Seri Iskandar,5%-5758,Preparing,FPX
+syarifah,Americano,Small,Hot,No,,2.50,9174,8,2024-11-22 14:34:28,Seri Iskandar,5%-6644,Preparing,FPX
+syarifah,Americano,Small,Hot,No,,2.50,7917,13,2024-11-23 10:12:03,Seri Iskandar,5%-9715,Preparing,FPX
+syarifah,Americano,Small,Hot,No,,2.50,5238,6,2024-11-23 10:12:28,Seri Iskandar,5%-2267,Preparing,FPX
+syarifah,Americano,Small,Hot,No,,2.50,7627,11,2024-11-23 10:12:34,Seri Iskandar,No Coupons Available,Preparing,FPX
+syarifah,Americano,Small,Hot,No,,2.50,7381,7,2024-11-23 10:12:39,Seri Iskandar,No Coupons Available,Preparing,FPX
+syarifah,Americano,Small,Hot,No,,2.50,8746,14,2024-11-23 10:16:34,Seri Iskandar,5%-4227,Preparing,FPX
+syarifah,Americano,Small,Hot,No,,2.50,8435,9,2024-11-23 10:16:39,Seri Iskandar,teb2000,Preparing,FPX
+syarifah,Americano,Small,Hot,No,,2.50,4461,10,2024-11-23 10:16:47,Seri Iskandar,No Coupons Available,Preparing,FPX
+syarifah,Americano,Small,Hot,No,,2.50,4317,11,2024-11-23 10:16:54,Seri Iskandar,No Coupons Available,Preparing,FPX
