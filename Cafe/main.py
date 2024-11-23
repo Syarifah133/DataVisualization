@@ -35,14 +35,29 @@ elif st.session_state["page"] == "Admin":
 
 
 elif st.session_state.page == "payment" and 'order' in st.session_state and st.session_state.order is not None:
+    # Extract required fields from the stored order in session state
+    order = st.session_state.order
 
+    # Ensure all required keys are present in the order dictionary
+    username = order.get('Username', 'Guest')
+    order_details = order
+    total_price = float(order.get('Price (RM)', 0.00))
+    branch = order.get('Branch')
+    payment_method = order.get('Payment Method')
+    booking_number = order.get('Booking Number', 'N/A')
+    prep_time = order.get('Preparation Time (min)', 'N/A')
+    
+
+
+    # Call the display_payment_page function with validated data
     display_payment_page(
-        username=st.session_state.order['Username'],
-        order_details=st.session_state.order,
-        total_price=float(st.session_state.order['Price ($)']),
-        branch=st.session_state.order['Branch'],
-        payment_method=st.session_state.order['Method'],
-        booking_number=st.session_state.order['Booking Number'],
-        prep_time=st.session_state.order['Preparation Time (min)']
+        username=username,
+        order_details=order_details,
+        total_price=total_price,
+        branch=branch,
+        payment_method=payment_method,
+        booking_number=booking_number,
+        prep_time=prep_time,
+
     )
-   
+

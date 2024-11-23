@@ -1,2 +1,5 @@
-coffee_beans,milk,sugar,cups
-1813,690,300,100
+Item,Amount
+Coffee Beans,205
+Milk,1580
+Sugar,3400
+Cups,100

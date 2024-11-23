@@ -4,23 +4,25 @@ import pandas as pd
 import streamlit as st
 import datetime
 from fpdf import FPDF
-import datetime
 
-# Function to load and filter active coupons
-def load_active_coupons(file_path='coupons.csv'):
-    if os.path.isfile(file_path):
-        coupons_df = pd.read_csv(file_path)
-        today = datetime.date.today()
-        coupons_df['Expiration Date'] = pd.to_datetime(coupons_df['Expiration Date']).dt.date
-        active_coupons = coupons_df[
-            (coupons_df['Active'] == True) & 
-            (coupons_df['Expiration Date'] >= today)
-        ]
-        return active_coupons
+
+
+# Display active coupons
+def load_active_coupons(username):
+    if os.path.isfile('coupons.csv'):
+        coupons_df = pd.read_csv('coupons.csv')
     else:
-        return pd.DataFrame(columns=['Coupon Code', 'Discount (%)', 'Expiration Date', 'Active'])
+        # Create an empty DataFrame if file doesn't exist
+        coupons_df = pd.DataFrame(columns=["Coupon Code", "Discount (%)", "Expiration Date", "Active", "Username"])
+    
+    # Filter active coupons for the given user or those available to all
+    active_coupons = coupons_df[
+        (coupons_df['Active'] == 'True') &  # Only active coupons
+        ((coupons_df['Username'] == username) | (coupons_df['Username'] == "all"))
+    ]
 
-# Function to mark a coupon as used
+    
+    return active_coupons
 def mark_coupon_as_used(coupon_code, file_path='coupons.csv'):
     if os.path.isfile(file_path):
         coupons_df = pd.read_csv(file_path)
@@ -28,10 +30,8 @@ def mark_coupon_as_used(coupon_code, file_path='coupons.csv'):
             coupons_df.loc[coupons_df['Coupon Code'] == coupon_code, 'Active'] = False
             coupons_df.to_csv(file_path, index=False)
 
-
-
 # Function to generate a dummy invoice as a PDF
-def generate_invoice(username, order_details, payment_method, branch, total_price):
+def generate_invoice(username, order_details, payment_method, branch, original_price, total_price):
     # Ensure the invoices folder exists
     invoice_folder = "invoices"
     if not os.path.exists(invoice_folder):
@@ -66,9 +66,10 @@ def generate_invoice(username, order_details, payment_method, branch, total_pric
         pdf.cell(0, 10, txt=f"{key}: {value}", ln=True)
     pdf.ln(10)
 
-    # Total price
+    # Display original price and discounted price
     pdf.set_font("Arial", "B", size=12)
-    pdf.cell(0, 10, txt=f"Total Price: ${total_price:.2f}", ln=True)
+    pdf.cell(0, 10, txt=f"Original Price: RM{original_price:.2f}", ln=True)
+    pdf.cell(0, 10, txt=f"Discounted Price: RM{total_price:.2f}", ln=True)
     pdf.ln(20)
 
     # Invoice footer
@@ -86,40 +87,53 @@ def display_payment_page(username, order_details, total_price, branch, payment_m
 
     # Get the selected coupon from session state
     selected_coupon = order_details.get('Coupon', None)
-
+    original_price = total_price  # Store the original price for invoice purposes
+    
     if selected_coupon and selected_coupon != "No Coupons Available":
         # Load active coupons to check details
-        active_coupons = load_active_coupons()
+        active_coupons = load_active_coupons(username)
         discount_row = active_coupons[active_coupons['Coupon Code'] == selected_coupon]
 
         if not discount_row.empty:
             # Coupon is valid, apply discount
             discount_percentage = discount_row['Discount (%)'].values[0]
-            original_price = total_price
             total_price *= (1 - discount_percentage / 100)
 
             st.write(f"Coupon `{selected_coupon}` applied! Discount: {discount_percentage}%")
-            st.write(f"**Original Price:** ${original_price:.2f}")
-            st.write(f"**Price After Discount:** ${total_price:.2f}")
+            st.write(f"**Original Price:** RM{original_price:.2f}")
+            st.write(f"**Price After Discount:** RM{total_price:.2f}")
+            
 
-            # Mark coupon as used
-            mark_coupon_as_used(selected_coupon)
 
     else:
         st.write("No coupon applied.")
-        st.write(f"**Total Price:** ${total_price:.2f}")
+        st.write(f"**Total Price:** RM{total_price:.2f}")
+
+    # If the payment method is FPX, show the bank selection dropdown
+    if payment_method == "FPX":
+        st.write("Please select your bank to proceed with FPX payment:")
+        banks = [
+            "Maybank", "CIMB", "Public Bank", "RHB Bank", "Hong Leong Bank",
+            "Affin Bank", "UOB", "Bank Islam", "Bank Rakyat", "Standard Chartered"
+        ]
+        selected_bank = st.selectbox("Select Bank", banks)
+
+        if selected_bank:
+            st.write(f"You have selected: {selected_bank}")
 
     # Add the "Pay Now" button
     if st.button("Pay Now"):
+        # Mark coupon as used
+        mark_coupon_as_used(selected_coupon)
         # Simulate successful payment process
         st.success("Payment successful! Your order has been processed.")
         st.success(f"Order placed! Your booking number is {booking_number}. Estimated preparation time is {prep_time} minutes.")
-        
-        # Generate the invoice
-        invoice_path = generate_invoice(username, order_details, payment_method, branch, total_price)
+
+        # Generate the invoice with both original and discounted prices
+    invoice_path = generate_invoice(username, order_details, payment_method, branch, original_price, total_price)
 
         # Provide option to download the invoice
-        with open(invoice_path, "rb") as file:
+    with open(invoice_path, "rb") as file:
             st.download_button(
                 label="Download Invoice",
                 data=file,

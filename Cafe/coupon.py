@@ -28,12 +28,15 @@ def create_coupon(coupon_code, discount, expiration_date):
         "Coupon Code": [coupon_code],
         "Discount (%)": [discount],
         "Expiration Date": [expiration_date],
-        "Active": [True]
+        "Active": [True],
+        "Username": "all"  # Set the Username to 'all'
+
     })
     
     coupons_df = pd.concat([coupons_df, new_coupon], ignore_index=True)
     save_coupons(coupons_df)
     st.success(f"Coupon '{coupon_code}' created successfully!")
+    st.rerun()
 
 # Function to deactivate a coupon
 def deactivate_coupon(coupon_code):
@@ -42,7 +45,7 @@ def deactivate_coupon(coupon_code):
         coupons_df.loc[coupons_df['Coupon Code'] == coupon_code, 'Active'] = False
         save_coupons(coupons_df)
         st.success(f"Coupon '{coupon_code}' deactivated successfully!")
-        st.experimental_rerun()  # Rerun the app to update coupon status
+        st.rerun()  # Rerun the app to update coupon status
     else:
         st.error("Coupon code not found!")
 

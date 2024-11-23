@@ -5,7 +5,7 @@ import bcrypt
 USER_DB = "users.csv"  # Path to the user database
 
 def hash_password(password):
-    """Generate a hashed password."""
+    # Generate a hashed password.
     return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
 def load_user_data():

@@ -153,12 +153,37 @@ def load_active_coupons(username):
     if os.path.isfile('coupons.csv'):
         coupons_df = pd.read_csv('coupons.csv')
     else:
+        # Create an empty DataFrame if file doesn't exist
         coupons_df = pd.DataFrame(columns=["Coupon Code", "Discount (%)", "Expiration Date", "Active", "Username"])
+    
+    # Filter active coupons for the given user or those available to all
+    active_coupons = coupons_df[
+        (coupons_df['Active'] == 'True') &  # Only active coupons
+        ((coupons_df['Username'] == username) | (coupons_df['Username'] == "all"))
+    ]
 
-    active_coupons = coupons_df[(coupons_df['Active'] == True) & ((coupons_df['Username'] == username) | (coupons_df['Username'] == "all"))]
+    
     return active_coupons
 
+def load_past_coupons(username):
+    if os.path.isfile('coupons.csv'):
+        coupons_df = pd.read_csv('coupons.csv')
+    else:
+        # Create an empty DataFrame if file doesn't exist
+        coupons_df = pd.DataFrame(columns=["Coupon Code", "Discount (%)", "Expiration Date", "Active", "Username"])
+    
+    # Filter active coupons for the given user or those available to all
+    past_coupons = coupons_df[
+        (coupons_df['Active'] == 'False') &  # Only active coupons
+        ((coupons_df['Username'] == username) | (coupons_df['Username'] == "all"))
+    ]
+
+    
+    return past_coupons
+
+
 def display_homepage():
+    coupons_df = pd.read_csv('coupons.csv')
     if 'username' not in st.session_state:
         st.error("Please sign in to access this page.")
         return
@@ -203,6 +228,25 @@ def display_homepage():
                 """, unsafe_allow_html=True)
         else:
             st.info("No active coupons available at the moment.")
+        # Past Coupons Section
+        st.markdown("<hr>", unsafe_allow_html=True)
+        st.subheader("📜 Past Coupons")
+        past_coupons = load_past_coupons(username)
+
+        if not past_coupons.empty:
+            for _, coupon in past_coupons.iterrows():
+                st.markdown(f"""
+                <div style="background-color: #fbe9e7; padding: 20px; margin-bottom: 15px; border-radius: 10px; border-left: 5px solid #d84315;">
+                    <h4 style="color: #e64a19; font-size: 22px;">🎟️ <strong>{coupon['Coupon Code']}</strong></h4>
+                    <p style="font-size: 18px; color: #d84315;">**Discount**: {coupon['Discount (%)']}% Off</p>
+                    <p style="font-size: 16px; color: #444;">**Expired On**: {coupon['Expiration Date']}</p>
+                    <div style="font-size: 18px; color: #c62828;">
+                        <strong>Inactive</strong> ❌
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+        else:
+            st.info("No past coupons available at the moment.")
 
     elif page == "Order":
         display_order_page(username)
@@ -212,4 +256,3 @@ def display_homepage():
 
     if st.sidebar.button('Logout'):
         logout()  # Call the logout function when the button is clicked
-

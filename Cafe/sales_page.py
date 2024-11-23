@@ -5,10 +5,10 @@ import altair as alt
 
 # Assuming inventory costs for simplicity
 coffee_costs = {
-    'Americano': 2.0,  # Cost per unit for Americano
-    'Cappuccino': 2.5,  # Cost per unit for Cappuccino
-    'Latte': 2.5,       # Cost per unit for Latte
-    'Caramel Macchiato': 2.5  # Cost per unit for CM
+    'Americano': 3.0,  # Cost per unit for Americano
+    'Cappuccino': 3.5,  # Cost per unit for Cappuccino
+    'Latte': 4.5,       # Cost per unit for Latte
+    'Caramel Macchiato': 4.5  # Cost per unit for CM
 }
 
 orders_file = 'orders.csv'

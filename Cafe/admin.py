@@ -18,9 +18,6 @@ def display_admin_page():
     # Sidebar title and logout button
     st.sidebar.title("Admin Dashboard")
     
-    # Add Logout button to the sidebar
-    if st.sidebar.button('Logout'):
-        logout()  # Call the logout function when the button is clicked
     
     # Page navigation in the sidebar
     page = st.sidebar.selectbox(
@@ -43,6 +40,9 @@ def display_admin_page():
     
      # Fetch username from session
     display_admin_notifications(username)  # Display notifications for the admin
+    # Add Logout button to the sidebar
+    if st.sidebar.button('Logout'):
+        logout()  # Call the logout function when the button is clicked
 
 
 # Show the login page if the user is not logged in

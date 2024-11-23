@@ -15,6 +15,10 @@ def display_order_history(username):  # Accept the username as a parameter
         st.info("No orders found.")
         return
 
+    # Initialize session state for notifications if not already done
+    if 'notified_orders' not in st.session_state:
+        st.session_state.notified_orders = set()
+
     # Filter options
     st.subheader("Filter Orders")
     filter_status = st.selectbox("Filter by Status", ['All', 'Preparing', 'Ready for Pickup', 'Done'])
@@ -61,16 +65,17 @@ def display_order_history(username):  # Accept the username as a parameter
         )
 
         # Button to update the order status
-        if st.button(f"Update Status for Order #{order_id}", key=f"update_{order_id}"):
+        if st.button(f"Update Status for Order #{order_id}", key=button_key):
 
             # Update the status in the DataFrame
-            orders_df.loc[orders_df['Booking Number'] == order_id, 'Status'] = new_status
+            orders_df.loc[orders_df['Booking Number'] == order_id, 'Current Status'] = new_status
             orders_df.to_csv(orders_file, index=False)
 
             # If the status is updated to anything other than "Preparing", add notification
             if new_status != 'Preparing':
-                notification_msg = f"Order #{order_id} status updated to **{new_status}**."
-                add_notification(order['Username'], notification_msg)  # Add notification for the user
-                st.success(notification_msg)
-            else:
-                st.success(f"Order #{order_id} status updated to **{new_status}**.")
+                if order_id not in st.session_state.notified_orders:
+                    notification_msg = f"Order #{order_id} status updated to **{new_status}**."
+                    add_notification(order['Username'], notification_msg)  # Add notification for the user
+                    st.session_state.notified_orders.add(order_id)  # Mark this order as notified
+                    st.success(f"Order #{order_id} status updated to **{new_status}**.")
+                
