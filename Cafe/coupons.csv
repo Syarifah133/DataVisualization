@@ -1,11 +1,10 @@
-Coupon Code,Discount (%),Expiration Date,Active
-TEB3100,10,2024-11-20,False
-TEB3333,10,2024-11-20,False
-5%-2096,5,2024-12-21,False
-5%-6850,5,2024-12-21,False
-5%-2808,5,2024-12-21,False
-5%-5122,5,2024-12-21,False
-5%-8658,5,2024-12-21,True
-5%-4912,5,2024-12-21,True
-5%-3934,5,2024-12-21,True
-5%-8645,5,2024-12-21,True
+Coupon Code,Discount (%),Expiration Date,Active,Username
+123,10,2024-11-22,False,all
+5%-5758,5,2024-12-22,False,ada
+5%-6644,5,2024-12-22,False,syarifah
+3131,10,2024-11-22,True,all
+5%-2267,5,2024-12-22,False,syarifah
+5%-9715,5,2024-12-22,False,syarifah
+5%-4227,5,2024-11-30,False,syarifah
+teb2000,10,2024-11-23,False,all
+5%-7974,5,2024-11-30,True,syarifah

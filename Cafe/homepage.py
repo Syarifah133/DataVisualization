@@ -2,169 +2,212 @@ import streamlit as st
 import pandas as pd
 import os
 import random
-import datetime
+from datetime import datetime
 from history import display_order_history
 from order import display_order_page
 from payment import display_payment_page
+from display_sidebar import display_cust_sidebar
+
+# Function to load loyalty data
+def load_loyalty_data():
+    if os.path.isfile('loyalty_points.csv'):
+        return pd.read_csv('loyalty_points.csv')
+    return pd.DataFrame(columns=['Username', 'Total Price', 'Redeem', 'Loyalty', 'Last Voucher'])
 
 
-# Function to load loyalty points from loyalty_point.csv
-def load_used_points():
-    if os.path.isfile('loyalty_point.csv'):
-        loyalty_df = pd.read_csv('loyalty_point.csv')
-        # Check if the user already has an entry, return loyalty points or 0
-        user_points = loyalty_df[loyalty_df['Username'] == st.session_state['username']]['Loyalty Points']
-        if not user_points.empty:
-            return user_points.iloc[0]
-    return 0  # Return 0 if user has no points yet
-
+# Function to update loyalty data based on orders
 def update_loyalty_points():
-    if "loyalty_points" not in st.session_state:
-        st.session_state["loyalty_points"] = 0  # Initialize loyalty points if not present
+    loyalty_df = load_loyalty_data()
 
-    # Load order history from CSV or session (assuming orders.csv has a 'Price' column)
+    # Load orders and calculate total spent by the user
     if os.path.isfile('orders.csv'):
         orders_df = pd.read_csv('orders.csv')
         total_spent = orders_df[orders_df['Username'] == st.session_state['username']]['Price'].sum()
     else:
         total_spent = 0
 
-    # Each $1 spent gives 1 loyalty point
-    loyalty_points = int(total_spent)
-    st.session_state["loyalty_points"] = loyalty_points
+    # Check if the user exists in the loyalty data
+    user_record = loyalty_df[loyalty_df['Username'] == st.session_state['username']]
+    if not user_record.empty:
+        # Update existing user's total price and loyalty points
+        redeemed_points = user_record['Redeem'].iloc[0]
+        loyalty_df.loc[loyalty_df['Username'] == st.session_state['username'], 'Total Price'] = total_spent
+        loyalty_df.loc[loyalty_df['Username'] == st.session_state['username'], 'Loyalty'] = total_spent - redeemed_points
+    else:
+        # Create a new record for the user
+        new_record = {
+            'Username': st.session_state['username'],
+            'Total Price': total_spent,
+            'Redeem': 0,
+            'Loyalty': total_spent,
+            'Last Voucher': None
+        }
+        loyalty_df = pd.concat([loyalty_df, pd.DataFrame([new_record])], ignore_index=True)
 
-    # Now load the loyalty points from the loyalty_point.csv using the correct column name
-    if os.path.isfile('loyalty_point.csv'):
-        loyalty_df = pd.read_csv('loyalty_point.csv')
-        # Check if the user already has an entry, return loyalty points or 0
-        user_points = loyalty_df[loyalty_df['Username'] == st.session_state['username']]['points']
-        if not user_points.empty:
-            st.session_state["loyalty_points"] += user_points.iloc[0]  # Add points from the file to session state
+    # Update session state
+    st.session_state["loyalty_points"] = loyalty_df[loyalty_df['Username'] == st.session_state['username']]['Loyalty'].iloc[0]
+
+    # Save the updated loyalty data
+    loyalty_df.to_csv('loyalty_points.csv', index=False)
 
 
-# Function to load active coupons
-def load_active_coupons():
-    coupons_df = pd.read_csv('coupons.csv') if os.path.exists('coupons.csv') else pd.DataFrame(columns=["Coupon Code", "Discount (%)", "Expiration Date", "Active"])
-    return coupons_df[coupons_df['Active'] == True]  # Return only active coupons
+# Function to save the redeemed voucher as an active coupon
+def save_coupon(voucher_code, discount, username):
+    # Check if the coupons file exists
+    if os.path.isfile('coupons.csv'):
+        coupons_df = pd.read_csv('coupons.csv')
+    else:
+        coupons_df = pd.DataFrame(columns=["Coupon Code", "Discount (%)", "Expiration Date", "Active", "Username"])
 
-def display_loyalty_points():
-    # Beautifully display loyalty points
+    # Generate a random expiration date (e.g., 7 days from now)
+    expiration_date = (datetime.now() + pd.Timedelta(days=7)).strftime("%Y-%m-%d")
+
+    # Add the new coupon to the DataFrame
+    new_coupon = {
+        "Coupon Code": voucher_code,
+        "Discount (%)": discount,
+        "Expiration Date": expiration_date,
+        "Active": True,
+        "Username": username
+    }
+    coupons_df = pd.concat([coupons_df, pd.DataFrame([new_coupon])], ignore_index=True)
+
+    # Save the updated coupons data
+    coupons_df.to_csv('coupons.csv', index=False)
+
+
+# Updated redeem_voucher function
+def redeem_voucher():
+    if "loyalty_points" not in st.session_state:
+        st.session_state["loyalty_points"] = 0
+
+    # Voucher options based on loyalty points
+    voucher_options = {
+        "5% Off (10 Points)": {"discount": 5, "required_points": 10},
+        "10% Off (100 Points)": {"discount": 10, "required_points": 100},
+        "15% Off (150 Points)": {"discount": 15, "required_points": 150}
+    }
+
+    # Check for available vouchers
+    available_vouchers = {
+        k: v for k, v in voucher_options.items() if st.session_state["loyalty_points"] >= v["required_points"]
+    }
+
+    if available_vouchers:
+        selected_voucher = st.selectbox("Select a voucher to redeem", options=list(available_vouchers.keys()))
+
+        if st.button("Redeem Voucher"):
+            voucher_details = available_vouchers[selected_voucher]
+            required_points = voucher_details["required_points"]
+            discount = voucher_details["discount"]
+
+            # Deduct points and update data
+            st.session_state["loyalty_points"] -= required_points
+            loyalty_df = load_loyalty_data()
+
+            # Generate a unique voucher code
+            voucher_code = f"{selected_voucher.split()[0].upper()}-{random.randint(1000, 9999)}"
+
+            # Update user's loyalty record
+            user_record = loyalty_df[loyalty_df['Username'] == st.session_state['username']]
+            if not user_record.empty:
+                current_redeem = user_record['Redeem'].iloc[0]
+                new_redeem = current_redeem + required_points
+
+                loyalty_df.loc[loyalty_df['Username'] == st.session_state['username'], 'Redeem'] = new_redeem
+                loyalty_df.loc[loyalty_df['Username'] == st.session_state['username'], 'Loyalty'] = \
+                    loyalty_df.loc[loyalty_df['Username'] == st.session_state['username'], 'Total Price'] - new_redeem
+                loyalty_df.loc[loyalty_df['Username'] == st.session_state['username'], 'Last Voucher'] = selected_voucher
+            else:
+                # Create a new record if user not found
+                new_record = {
+                    'Username': st.session_state['username'],
+                    'Total Price': 0,
+                    'Redeem': required_points,
+                    'Loyalty': st.session_state["loyalty_points"],
+                    'Last Voucher': selected_voucher
+                }
+                loyalty_df = pd.concat([loyalty_df, pd.DataFrame([new_record])], ignore_index=True)
+
+            # Save the updated loyalty data
+            loyalty_df.to_csv('loyalty_points.csv', index=False)
+
+            # Save the voucher as an active coupon
+            save_coupon(voucher_code, discount, st.session_state['username'])
+
+            # Success message for voucher redemption
+            st.success(f"You have successfully redeemed a {discount}% off voucher!")
+            st.write(f"🎟️ Your voucher code is: `{voucher_code}`")
+            st.markdown(f"🎉 **Your new loyalty balance:** {st.session_state['loyalty_points']} points")
+            st.rerun()
+    else:
+        st.info("You don't have enough points to redeem any vouchers at the moment.")
+
+# Display active coupons
+def load_active_coupons(username):
+    if os.path.isfile('coupons.csv'):
+        coupons_df = pd.read_csv('coupons.csv')
+    else:
+        coupons_df = pd.DataFrame(columns=["Coupon Code", "Discount (%)", "Expiration Date", "Active", "Username"])
+
+    active_coupons = coupons_df[(coupons_df['Active'] == True) & ((coupons_df['Username'] == username) | (coupons_df['Username'] == "all"))]
+    return active_coupons
+
+def display_homepage():
+    if 'username' not in st.session_state:
+        st.error("Please sign in to access this page.")
+        return
+
+    username = st.session_state['username']
+    page = display_cust_sidebar(username)
+
+    if page == "Homepage":
+        # Welcome User
+        st.subheader(f"Welcome back, {username}!")
+
+        # Update and display loyalty points
+        update_loyalty_points()
         st.markdown(f"""
-        <div style="background-color: #f0f8ff; padding: 10px; border-radius: 5px;">
-            <h3 style="color: #4CAF50;">🎉 You have <strong>{st.session_state['loyalty_points']}</strong> loyalty points</h3>
-            <p style="font-size: 18px;">Keep earning points with each purchase to redeem awesome rewards!</p>
+        <div style="background-color: #f9f7f6; padding: 20px; margin-top: 20px; border-radius: 10px; text-align: center; border: 2px solid #4CAF50;">
+            <h2 style="color: #27ae60; margin: 0;">🎉 {int(st.session_state['loyalty_points'])} Loyalty Points</h2>
+            <p style="font-size: 16px; color: #2d3436;">Earn more points with every purchase to unlock amazing rewards!</p>
         </div>
         """, unsafe_allow_html=True)
 
-def display_homepage():
-    # Sidebar Navigation
-    st.sidebar.title("Navigation")
-    # Sidebar Navigation with selectbox instead of radio
-    page = st.sidebar.selectbox("Go to", ["Homepage", "Order", "History"])
-
-    if 'username' not in st.session_state:
-        st.error("You need to sign in to access the homepage!")
-        return
-
-    username = st.session_state["username"]
-
-    if page == "Homepage":  # Fixed indentation error
-        st.subheader(f"Welcome back, {username}!")
-
-        # Update loyalty points based on previous orders
-        update_loyalty_points()
-        display_loyalty_points()
-
-        
-
-        # Redeem voucher section
+        # Redeem a voucher section
         st.markdown("<hr>", unsafe_allow_html=True)
         st.subheader("🎁 Redeem a Voucher")
+        st.write("Redeem your points for exciting discounts on your next purchase.")
+        redeem_voucher()
 
-        voucher_options = {
-            "5% Off (10 Points)": {"discount": 5, "required_points": 10},
-            "10% Off (100 Points)": {"discount": 10, "required_points": 100},
-            "15% Off (150 Points)": {"discount": 15, "required_points": 150}
-        }
-
-        available_vouchers = {
-            k: v for k, v in voucher_options.items() if st.session_state["loyalty_points"] >= v["required_points"]
-        }
-
-        if available_vouchers:
-            selected_voucher = st.selectbox(
-                "Select a voucher to redeem",
-                options=list(available_vouchers.keys())
-            )
-
-            if st.button("Redeem Voucher"):
-                voucher_details = available_vouchers[selected_voucher]
-
-                # Deduct the required points from the session state
-                st.session_state["loyalty_points"] -= voucher_details["required_points"]
-                display_loyalty_points()
-
-                # Save the redeemed voucher as a new active coupon
-                new_coupon = {
-                    "Coupon Code": f"{selected_voucher.split()[0].upper()}-{random.randint(1000, 9999)}",
-                    "Discount (%)": voucher_details["discount"],
-                    "Expiration Date": (datetime.datetime.now() + datetime.timedelta(days=30)).strftime('%Y-%m-%d'),
-                    "Active": True
-                }
-
-                # Update the CSV file with the new coupon
-                if os.path.isfile('coupons.csv'):
-                    coupons_df = pd.read_csv('coupons.csv')
-                else:
-                    coupons_df = pd.DataFrame(columns=new_coupon.keys())
-
-                # Add the new coupon to the DataFrame and save
-                new_coupon_df = pd.DataFrame([new_coupon])
-                coupons_df = pd.concat([coupons_df, new_coupon_df], ignore_index=True)
-                coupons_df.to_csv('coupons.csv', index=False)
-
-                # Show success message
-                st.success(f"You have successfully redeemed a {voucher_details['discount']}% off voucher!")
-                st.write(f"🎟️ Your voucher code is: `{new_coupon['Coupon Code']}`")
-        else:
-            st.info("You don't have enough points to redeem any vouchers at the moment.")
-
-        # Show active coupons
+        # Active Coupons Section
         st.markdown("<hr>", unsafe_allow_html=True)
-        st.subheader("🌟 Active Coupons Available for You!")
-
-        active_coupons = load_active_coupons()
+        st.subheader("🌟 Active Coupons")
+        active_coupons = load_active_coupons(username)
         if not active_coupons.empty:
-            for _, row in active_coupons.iterrows():
-                coupon_code = row['Coupon Code']
-                discount = row['Discount (%)']
-                expiration_date = row['Expiration Date']
-
-                # Beautiful box for each coupon
+            for _, coupon in active_coupons.iterrows():
                 st.markdown(f"""
                 <div style="background-color: #e0f7fa; padding: 20px; margin-bottom: 15px; border-radius: 10px; border-left: 5px solid #009688;">
-                    <h4 style="color: #00796b; font-size: 22px;">🎟️ <strong>{coupon_code}</strong></h4>
-                    <p style="font-size: 18px; color: #00796b;">**Discount**: {discount}% Off</p>
-                    <p style="font-size: 16px; color: #444;">**Expires On**: {expiration_date}</p>
+                    <h4 style="color: #00796b; font-size: 22px;">🎟️ <strong>{coupon['Coupon Code']}</strong></h4>
+                    <p style="font-size: 18px; color: #00796b;">**Discount**: {coupon['Discount (%)']}% Off</p>
+                    <p style="font-size: 16px; color: #444;">**Expires On**: {coupon['Expiration Date']}</p>
                     <div style="font-size: 18px; color: #388e3c;">
                         <strong>Active</strong> ✔️
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
         else:
-            st.info("No active coupons available right now.")
+            st.info("No active coupons available at the moment.")
 
         # Logout Button
         st.markdown("<hr>", unsafe_allow_html=True)
         if st.button("Log Out"):
-            st.session_state.clear()  # Clear session state
-            st.session_state["page"] = "Sign In"  # Redirect to Sign In
+            st.session_state.clear()
+            st.session_state["page"] = "Sign In"
             st.success("You have logged out. Redirecting to Sign In...")
 
     elif page == "Order":
-        # Display Order Page
         display_order_page(username)
-    
+
     elif page == "History":
-        # Display Order History Page
         display_order_history()
