@@ -13,7 +13,6 @@ def logout():
     st.session_state.clear()  # Clears all session state variables (e.g., user_type, username)
     st.session_state["page"] = "Sign In"  # Redirect the user to the Sign In page
     st.rerun()
-
 # Function to load loyalty data
 def load_loyalty_data():
     if os.path.isfile('loyalty_points.csv'):
@@ -205,8 +204,6 @@ def display_homepage():
         else:
             st.info("No active coupons available at the moment.")
 
-        
-
     elif page == "Order":
         display_order_page(username)
 
@@ -215,3 +212,4 @@ def display_homepage():
 
     if st.sidebar.button('Logout'):
         logout()  # Call the logout function when the button is clicked
+

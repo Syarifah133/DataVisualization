@@ -1,11 +1,9 @@
-# order_history.py
 import os
 import pandas as pd
 import streamlit as st
 from display_sidebar import add_notification
+
 orders_file = 'orders.csv'
-
-
 
 # Function to display order history and allow updates
 def display_order_history(username):  # Accept the username as a parameter
@@ -17,9 +15,28 @@ def display_order_history(username):  # Accept the username as a parameter
         st.info("No orders found.")
         return
 
+    # Filter options
+    st.subheader("Filter Orders")
+    filter_status = st.selectbox("Filter by Status", ['All', 'Preparing', 'Ready for Pickup', 'Done'])
+    filter_branch = st.selectbox("Filter by Branch", ['All'] + list(orders_df['Branch'].unique()))
+    filter_username = st.text_input("Filter by Username", "")
+
+    # Apply filters
+    if filter_status != 'All':
+        orders_df = orders_df[orders_df['Status'] == filter_status]
+    if filter_branch != 'All':
+        orders_df = orders_df[orders_df['Branch'] == filter_branch]
+    if filter_username:
+        orders_df = orders_df[orders_df['Username'].str.contains(filter_username, case=False, na=False)]
+
+    if orders_df.empty:
+        st.info("No orders found based on the selected filters.")
+        return
+
     st.write("### Order History")
     st.dataframe(orders_df)
 
+    # Update order status
     for index, order in orders_df.iterrows():
         order_id = order['Booking Number']
         current_status = order['Status'] if pd.notna(order['Status']) else 'Preparing'
@@ -43,9 +60,8 @@ def display_order_history(username):  # Accept the username as a parameter
             key=selectbox_key
         )
 
+        # Button to update the order status
         if st.button(f"Update Status for Order #{order_id}", key=f"update_{order_id}"):
-            # Debugging output
-            st.write(f"Button clicked for Order #{order_id}")  
 
             # Update the status in the DataFrame
             orders_df.loc[orders_df['Booking Number'] == order_id, 'Status'] = new_status
@@ -57,7 +73,4 @@ def display_order_history(username):  # Accept the username as a parameter
                 add_notification(order['Username'], notification_msg)  # Add notification for the user
                 st.success(notification_msg)
             else:
-                st.success(notification_msg)
-
-          
-
+                st.success(f"Order #{order_id} status updated to **{new_status}**.")

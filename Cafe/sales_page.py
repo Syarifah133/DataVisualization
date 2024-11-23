@@ -1,16 +1,17 @@
 import os
 import pandas as pd
 import streamlit as st
+import altair as alt
 
-orders_file = 'orders.csv'
-
-# Assuming inventory costs (for simplicity, you may want to replace this with a dynamic cost structure)
+# Assuming inventory costs for simplicity
 coffee_costs = {
     'Americano': 2.0,  # Cost per unit for Americano
     'Cappuccino': 2.5,  # Cost per unit for Cappuccino
     'Latte': 2.5,       # Cost per unit for Latte
-    'Espresso': 1.5     # Cost per unit for Espresso
+    'Caramel Macchiato': 2.5  # Cost per unit for CM
 }
+
+orders_file = 'orders.csv'
 
 def display_sales_reporting():  
     st.title("Sales Reporting")
@@ -22,81 +23,172 @@ def display_sales_reporting():
     # Load Orders Data
     orders_df = pd.read_csv(orders_file, parse_dates=['Order Time'])
 
-    # Total Sales Report (Daily, Weekly, Monthly)
-    st.subheader("Total Sales Report")
-    
-    # Adding date-based columns
+    # Adding date-based columns for grouping
     orders_df['Date'] = orders_df['Order Time'].dt.date
     orders_df['Week'] = orders_df['Order Time'].dt.to_period('W').dt.start_time
     orders_df['Month'] = orders_df['Order Time'].dt.to_period('M').dt.start_time
 
-    # Group by Date for Daily Sales Report
-    daily_sales = orders_df.groupby('Date').agg(
-        Quantity=('Price', 'count'),
-        Revenue=('Price', 'sum')
+    # Select box for choosing the report type
+    report_type = st.selectbox(
+        "Select Report Type",
+        ["Total Sales Report", "Sales Breakdown by Coffee Type", "Best and Worst Sellers", "Total Profit Calculation"]
     )
 
-    st.write("### Daily Sales")
-    st.line_chart(daily_sales)
+    if report_type == "Total Sales Report":
+        # Group by Date for Daily Sales Report
+        daily_sales = orders_df.groupby('Date').agg(
+            Quantity=('Price', 'count'),
+            Revenue=('Price', 'sum')
+        ).reset_index()
 
-    # Group by Week for Weekly Sales Report
-    weekly_sales = orders_df.groupby('Week').agg(
-        Quantity=('Price', 'count'),
-        Revenue=('Price', 'sum')
-    )
-    
-    st.write("### Weekly Sales")
-    st.line_chart(weekly_sales)
+        daily_sales_melted = daily_sales.melt(id_vars=['Date'], value_vars=['Revenue', 'Quantity'],
+                                              var_name='Metric', value_name='Value')
 
-    # Group by Month for Monthly Sales Report
-    monthly_sales = orders_df.groupby('Month').agg(
-        Quantity=('Price', 'count'),
-        Revenue=('Price', 'sum')
-    )
-    
-    st.write("### Monthly Sales")
-    st.line_chart(monthly_sales)
+        st.write("### Daily Sales")
+        daily_sales_chart = alt.Chart(daily_sales_melted).mark_line().encode(
+            x='Date:T',
+            y='Value:Q',
+            color='Metric:N',  # This will generate the legend
+            tooltip=['Date:T', 'Metric:N', 'Value:Q'],  # Tooltip for hover
+            size=alt.value(3)
+        ).properties(width=700, height=400).interactive()
 
-    # Coffee Type Breakdown
-    st.subheader("Sales Breakdown by Coffee Type")
-    coffee_breakdown = orders_df.groupby('Coffee Type').agg(
-        Quantity=('Price', 'count'),
-        Revenue=('Price', 'sum')
-    ).sort_values('Quantity', ascending=False)
-    
-    st.write("### Coffee Type Breakdown")
-    st.bar_chart(coffee_breakdown['Quantity'])
-    st.dataframe(coffee_breakdown)
+        st.altair_chart(daily_sales_chart, use_container_width=True)
+        st.write(daily_sales)  # Display the dataframe below the chart
 
-    # Best and Worst Sellers
-    st.subheader("Best and Worst Sellers")
-    
-    # Best Sellers (Highest Quantity Sold)
-    best_seller = coffee_breakdown['Quantity'].idxmax()
-    best_seller_qty = coffee_breakdown['Quantity'].max()
+        # Weekly Sales
+        weekly_sales = orders_df.groupby('Week').agg(
+            Quantity=('Price', 'count'),
+            Revenue=('Price', 'sum')
+        ).reset_index()
 
-    # Worst Sellers (Lowest Quantity Sold)
-    worst_seller = coffee_breakdown['Quantity'].idxmin()
-    worst_seller_qty = coffee_breakdown['Quantity'].min()
+        weekly_sales_melted = weekly_sales.melt(id_vars=['Week'], value_vars=['Revenue', 'Quantity'],
+                                                var_name='Metric', value_name='Value')
 
-    st.write(f"**Best Seller:** {best_seller} with {best_seller_qty} units sold")
-    st.write(f"**Worst Seller:** {worst_seller} with {worst_seller_qty} units sold")
+        st.write("### Weekly Sales")
+        weekly_sales_chart = alt.Chart(weekly_sales_melted).mark_line().encode(
+            x='Week:T',
+            y='Value:Q',
+            color='Metric:N',
+            tooltip=['Week:T', 'Metric:N', 'Value:Q'],
+            size=alt.value(3)
+        ).properties(width=700, height=400).interactive()
 
-    # Total Profit Calculation
-    st.subheader("Total Profit Calculation")
+        st.altair_chart(weekly_sales_chart, use_container_width=True)
+        st.write(weekly_sales)  # Display the dataframe below the chart
 
-    # Assuming revenue - inventory costs gives the profit for each coffee type sold
-    orders_df['Cost'] = orders_df['Coffee Type'].map(coffee_costs)
-    orders_df['Profit'] = orders_df['Price'] - orders_df['Cost']
-    
-    daily_profit = orders_df.groupby('Date')['Profit'].sum()
-    st.write("### Daily Profit")
-    st.line_chart(daily_profit)
+        # Monthly Sales
+        monthly_sales = orders_df.groupby('Month').agg(
+            Quantity=('Price', 'count'),
+            Revenue=('Price', 'sum')
+        ).reset_index()
 
-    weekly_profit = orders_df.groupby('Week')['Profit'].sum()
-    st.write("### Weekly Profit")
-    st.line_chart(weekly_profit)
+        monthly_sales_melted = monthly_sales.melt(id_vars=['Month'], value_vars=['Revenue', 'Quantity'],
+                                                  var_name='Metric', value_name='Value')
 
-    monthly_profit = orders_df.groupby('Month')['Profit'].sum()
-    st.write("### Monthly Profit")
-    st.line_chart(monthly_profit)
+        st.write("### Monthly Sales")
+        monthly_sales_chart = alt.Chart(monthly_sales_melted).mark_line().encode(
+            x='Month:T',
+            y='Value:Q',
+            color='Metric:N',
+            tooltip=['Month:T', 'Metric:N', 'Value:Q'],
+            size=alt.value(3)
+        ).properties(width=700, height=400).interactive()
+
+        st.altair_chart(monthly_sales_chart, use_container_width=True)
+        st.write(monthly_sales)  # Display the dataframe below the chart
+
+    elif report_type == "Sales Breakdown by Coffee Type":
+        # Group by Coffee Type for sales breakdown
+        coffee_breakdown = orders_df.groupby('Coffee Type').agg(
+            Quantity=('Price', 'count'),
+            Revenue=('Price', 'sum')
+        ).reset_index().sort_values('Quantity', ascending=False)
+
+        st.write("### Coffee Type Breakdown")
+        coffee_type_chart = alt.Chart(coffee_breakdown).mark_bar().encode(
+            x='Quantity:Q',
+            y='Coffee Type:N',
+            color='Coffee Type:N',
+            tooltip=['Coffee Type:N', 'Quantity:Q', 'Revenue:Q']
+        ).properties(width=700, height=400).interactive()
+
+        st.altair_chart(coffee_type_chart, use_container_width=True)
+        st.write(coffee_breakdown)  # Display the dataframe below the chart
+
+    elif report_type == "Best and Worst Sellers":
+        # Group by Coffee Type for best and worst sellers
+        coffee_sales = orders_df.groupby('Coffee Type').agg(
+            Quantity=('Price', 'count'),
+            Revenue=('Price', 'sum')
+        ).reset_index()
+
+        # Find the best seller (highest quantity) and worst seller (lowest quantity)
+        best_seller = coffee_sales.loc[coffee_sales['Quantity'].idxmax()]
+        worst_seller = coffee_sales.loc[coffee_sales['Quantity'].idxmin()]
+
+        st.write("### Best and Worst Sellers")
+        
+        # Display Best and Worst Sellers Text Information
+        st.write(f"**Best-selling coffee type**: {best_seller['Coffee Type']} with {best_seller['Quantity']} sold")
+        st.write(f"**Worst-selling coffee type**: {worst_seller['Coffee Type']} with {worst_seller['Quantity']} sold")
+        
+        # Bar Chart showing Coffee Sales to visualize Best and Worst Sellers
+        coffee_sales_sorted = coffee_sales.sort_values('Quantity', ascending=False)
+
+        coffee_sales_chart = alt.Chart(coffee_sales_sorted).mark_bar().encode(
+            x='Quantity:Q',
+            y='Coffee Type:N',
+            color='Coffee Type:N',
+            tooltip=['Coffee Type:N', 'Quantity:Q', 'Revenue:Q']
+        ).properties(width=700, height=400).interactive()
+
+        st.altair_chart(coffee_sales_chart, use_container_width=True)
+        st.write(coffee_sales_sorted)  # Display the dataframe below the chart
+
+    elif report_type == "Total Profit Calculation":
+        # Calculate profit: Revenue - Cost
+        orders_df['Cost'] = orders_df['Coffee Type'].map(coffee_costs)
+        orders_df['Profit'] = orders_df['Price'] - orders_df['Cost']
+
+        # Group by Date for Daily Profit
+        daily_profit = orders_df.groupby('Date')['Profit'].sum().reset_index()
+        st.write("### Daily Profit")
+        daily_profit_chart = alt.Chart(daily_profit).mark_line().encode(
+            x='Date:T',
+            y='Profit:Q',
+            color=alt.value('green'),
+            tooltip=['Date:T', 'Profit:Q'],
+            size=alt.value(3)
+        ).properties(width=700, height=400).interactive()
+
+        st.altair_chart(daily_profit_chart, use_container_width=True)
+        st.write(daily_profit)  # Display the dataframe below the chart
+
+        # Weekly Profit
+        weekly_profit = orders_df.groupby('Week')['Profit'].sum().reset_index()
+        st.write("### Weekly Profit")
+        weekly_profit_chart = alt.Chart(weekly_profit).mark_line().encode(
+            x='Week:T',
+            y='Profit:Q',
+            color=alt.value('green'),
+            tooltip=['Week:T', 'Profit:Q'],
+            size=alt.value(3)
+        ).properties(width=700, height=400).interactive()
+
+        st.altair_chart(weekly_profit_chart, use_container_width=True)
+        st.write(weekly_profit)  # Display the dataframe below the chart
+
+        # Monthly Profit
+        monthly_profit = orders_df.groupby('Month')['Profit'].sum().reset_index()
+        st.write("### Monthly Profit")
+        monthly_profit_chart = alt.Chart(monthly_profit).mark_line().encode(
+            x='Month:T',
+            y='Profit:Q',
+            color=alt.value('green'),
+            tooltip=['Month:T', 'Profit:Q'],
+            size=alt.value(3)
+        ).properties(width=700, height=400).interactive()
+
+        st.altair_chart(monthly_profit_chart, use_container_width=True)
+        st.write(monthly_profit)  # Display the dataframe below the chart

@@ -4,9 +4,8 @@ import streamlit as st
 from datetime import datetime
 
 # Define the path to your orders and inventory files
-orders_file = 'orders.csv'
 inventory_file = 'inventory.csv'  # Make sure your inventory data is stored in a CSV or other format
-
+orders_file='orders.csv'
 # Example of maximum stock levels for inventory items (can be adjusted based on your requirements)
 max_stock = {
     'coffee beans': 100,
@@ -53,6 +52,9 @@ def colored_progress_bar(ratio, color):
 def display_analytics_dashboard():
     st.title("Analytics Dashboard")
 
+    # Radio button for page selection
+    page_option = st.radio("Choose Report Type", ['Sales Trends', 'Inventory Health', 'Order Management'])
+
     # Load the order data
     orders_df = load_orders()
     
@@ -60,68 +62,73 @@ def display_analytics_dashboard():
         st.info("No sales data found. Please add orders to view analytics.")
         return
 
-    # Sales Trend (Daily)
-    st.subheader("Sales Trend (Daily)")
-    orders_df['Date'] = orders_df['Order Time'].dt.date
-    sales_by_date = orders_df.groupby('Date').agg(Quantity=('Price', 'count'), Revenue=('Price', 'sum'))
-    st.line_chart(sales_by_date)
+    # Display the appropriate section based on page option
+    if page_option == 'Sales Trends':
+        st.subheader("Sales Trend (Daily)")
+        orders_df['Date'] = orders_df['Order Time'].dt.date
+        sales_by_date = orders_df.groupby('Date').agg(Quantity=('Price', 'count'), Revenue=('Price', 'sum'))
+        st.dataframe(sales_by_date)
+        st.line_chart(sales_by_date)
 
-    # Revenue Trend (Weekly)
-    st.subheader("Revenue Trend (Weekly)")
-    orders_df['Week'] = orders_df['Order Time'].dt.to_period('W')
-    revenue_by_week = orders_df.groupby('Week').agg(Revenue=('Price', 'sum'))
-    st.line_chart(revenue_by_week)
+        st.subheader("Revenue Trend (Weekly)")
+        orders_df['Week'] = orders_df['Order Time'].dt.to_period('W')
+        revenue_by_week = orders_df.groupby('Week').agg(Revenue=('Price', 'sum'))
+        st.dataframe(revenue_by_week)
+        st.line_chart(revenue_by_week)
 
-    # Real-Time Monitoring: Current Orders and Sales
-    with st.expander("Current Orders & Sales", expanded=True):
-        st.subheader("Orders in 'Preparing' Status")
-
-        # Filter the orders that are in "Preparing" status
-        preparing_orders = orders_df[orders_df['Status'] == 'Preparing']
+        # **Revenue Trend (Monthly)**
+        st.subheader("Revenue Trend (Monthly)")
+        orders_df['Month'] = orders_df['Order Time'].dt.to_period('M')
+        revenue_by_month = orders_df.groupby('Month').agg(Revenue=('Price', 'sum'))
+        st.dataframe(revenue_by_month)
+        st.line_chart(revenue_by_month)
         
-        if preparing_orders.empty:
-            st.info("No orders are currently in 'Preparing' status.")
+
+    elif page_option == 'Inventory Health':
+        st.subheader("Inventory Health Check")
+        low_inventory_items = check_low_inventory()
+        
+        if low_inventory_items:
+            st.warning(f"The following items are running low and need restocking: {', '.join(low_inventory_items)}")
         else:
-            st.dataframe(preparing_orders[['Order Time', 'Coffee Type', 'Price', 'Status']])
+            st.success("All inventory levels are healthy.")
 
-    # Real-Time Sales Summary
-    st.markdown("### Real-Time Sales Summary")
-    total_sales = orders_df['Price'].sum()
-    total_orders = len(orders_df)
-    st.markdown(f"**Total Sales Revenue:** ${total_sales:.2f}")
-    st.markdown(f"**Total Orders Processed:** {total_orders}")
+        # Show Current Inventory Levels
+        with st.expander("Current Inventory Levels", expanded=True):
+            st.subheader("Inventory Levels")
 
-    # Inventory Health Check: Low Stock Items
-    st.subheader("Inventory Health Check")
-    low_inventory_items = check_low_inventory()
-    
-    if low_inventory_items:
-        st.warning(f"The following items are running low and need restocking: {', '.join(low_inventory_items)}")
-    else:
-        st.success("All inventory levels are healthy.")
+            for item, amount in inventory.items():
+                max_amount = max_stock[item]
+                stock_ratio = min(amount / max_amount, 1.0)
+                status = "Low Stock" if stock_ratio <= 0.2 else "Medium Stock" if stock_ratio <= 0.5 else "High Stock"
+                
+                # Color logic for progress bar
+                color = 'red' if stock_ratio <= 0.2 else 'orange' if stock_ratio <= 0.5 else 'green'
+                st.write(f"**{item.capitalize()}**: {amount}/{max_amount} ({status})")
+                
+                # Displaying the colored progress bar
+                colored_progress_bar(stock_ratio, color)
 
-    # Show Current Inventory Levels
-    with st.expander("Current Inventory Levels", expanded=True):
-        st.subheader("Inventory Levels")
+    elif page_option == 'Order Management':
+        st.subheader("Real-Time Orders & Sales")
+        
+        # Filter Orders based on user input
+        order_status = st.selectbox("Select Order Status", ['Preparing', 'Ready for Pickup', 'Done'])
+        filtered_orders = orders_df[orders_df['Status'] == order_status]
 
-        for item, amount in inventory.items():
-            max_amount = max_stock[item]
-            stock_ratio = min(amount / max_amount, 1.0)
-            status = "Low Stock" if stock_ratio <= 0.2 else "Medium Stock" if stock_ratio <= 0.5 else "High Stock"
-            
-            # Color logic for progress bar
-            color = 'red' if stock_ratio <= 0.2 else 'orange' if stock_ratio <= 0.5 else 'green'
-            st.write(f"**{item.capitalize()}**: {amount}/{max_amount} ({status})")
-            
-            # Displaying the colored progress bar
-            colored_progress_bar(stock_ratio, color)
+        if filtered_orders.empty:
+            st.info(f"No orders found with status: {order_status}")
+        else:
+            st.dataframe(filtered_orders[['Order Time', 'Coffee Type', 'Price', 'Status']])
 
-    # Display the order status options
-    st.subheader("Update Order Status")
-    order_id = st.number_input("Enter Order ID to Update", min_value=1)
-    if order_id:
-        new_status = st.selectbox("Select New Order Status", ['Preparing', 'Ready for Pickup', 'Done'])
-        if st.button("Update Status"):
-            orders_df.loc[orders_df['Booking Number'] == order_id, 'Status'] = new_status
-            orders_df.to_csv(orders_file, index=False)
-            st.success(f"Order #{order_id} status updated to {new_status}.")
+        # Update Order Status
+        st.subheader("Update Order Status")
+        order_id = st.number_input("Enter Order ID to Update", min_value=1)
+        if order_id:
+            new_status = st.selectbox("Select New Order Status", ['Preparing', 'Ready for Pickup', 'Done'])
+            if st.button("Update Status"):
+                orders_df.loc[orders_df['Booking Number'] == order_id, 'Status'] = new_status
+                orders_df.to_csv(orders_file, index=False)
+                st.success(f"Order #{order_id} status updated to {new_status}.")
+
+# Run the function to display the dashboard
