@@ -8,6 +8,12 @@ from order import display_order_page
 from payment import display_payment_page
 from display_sidebar import display_cust_sidebar
 
+
+def logout():
+    st.session_state.clear()  # Clears all session state variables (e.g., user_type, username)
+    st.session_state["page"] = "Sign In"  # Redirect the user to the Sign In page
+    st.rerun()
+
 # Function to load loyalty data
 def load_loyalty_data():
     if os.path.isfile('loyalty_points.csv'):
@@ -199,15 +205,13 @@ def display_homepage():
         else:
             st.info("No active coupons available at the moment.")
 
-        # Logout Button
-        st.markdown("<hr>", unsafe_allow_html=True)
-        if st.button("Log Out"):
-            st.session_state.clear()
-            st.session_state["page"] = "Sign In"
-            st.success("You have logged out. Redirecting to Sign In...")
+        
 
     elif page == "Order":
         display_order_page(username)
 
     elif page == "History":
         display_order_history()
+
+    if st.sidebar.button('Logout'):
+        logout()  # Call the logout function when the button is clicked
