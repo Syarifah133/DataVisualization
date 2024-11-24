@@ -3,9 +3,7 @@ import random
 import pandas as pd
 import streamlit as st
 import datetime
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
-
+from fpdf import FPDF
 
 
 
@@ -32,49 +30,57 @@ def mark_coupon_as_used(coupon_code, file_path='coupons.csv'):
             coupons_df.loc[coupons_df['Coupon Code'] == coupon_code, 'Active'] = False
             coupons_df.to_csv(file_path, index=False)
 
+# Function to generate a dummy invoice as a PDF
 def generate_invoice(username, order_details, payment_method, branch, original_price, total_price):
     # Ensure the invoices folder exists
     invoice_folder = "invoices"
     if not os.path.exists(invoice_folder):
         os.makedirs(invoice_folder)
-
+    
     # Define the invoice file path
     invoice_name = f"{invoice_folder}/invoice_{random.randint(1000, 9999)}.pdf"
-
-    # Create a PDF using ReportLab
-    c = canvas.Canvas(invoice_name, pagesize=letter)
-    width, height = letter
-
+    
+    # Initialize FPDF instance
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", size=12)
+    
     # Title
-    c.setFont("Helvetica-Bold", 16)
-    c.drawString(200, height - 50, "Invoice")
-
+    pdf.set_font("Arial", "B", size=14)
+    pdf.cell(200, 10, txt="Invoice", ln=True, align="C")
+    pdf.ln(10)
+    
     # Add details to the PDF
-    c.setFont("Helvetica", 12)
-    c.drawString(50, height - 100, f"Username: {username}")
-    c.drawString(50, height - 120, f"Order Date: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    c.drawString(50, height - 140, f"Branch: {branch}")
-    c.drawString(50, height - 160, f"Payment Method: {payment_method}")
+    pdf.set_font("Arial", size=12)
+    pdf.cell(0, 10, txt=f"Username: {username}", ln=True)
+    pdf.cell(0, 10, txt=f"Order Date: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", ln=True)
+    pdf.cell(0, 10, txt=f"Branch: {branch}", ln=True)
+    pdf.cell(0, 10, txt=f"Payment Method: {payment_method}", ln=True)
+    pdf.ln(10)
 
     # Order details
-    c.drawString(50, height - 200, "Order Details:")
-    y = height - 220
+    pdf.set_font("Arial", "B", size=12)
+    pdf.cell(0, 10, txt="Order Details:", ln=True)
+    pdf.set_font("Arial", size=12)
     for key, value in order_details.items():
-        c.drawString(70, y, f"{key}: {value}")
-        y -= 20
+        pdf.cell(0, 10, txt=f"{key}: {value}", ln=True)
+    pdf.ln(10)
 
-    # Prices
-    c.drawString(50, y - 20, f"Original Price: RM{original_price:.2f}")
-    c.drawString(50, y - 40, f"Discounted Price: RM{total_price:.2f}")
+    # Display original price and discounted price
+    pdf.set_font("Arial", "B", size=12)
+    pdf.cell(0, 10, txt=f"Original Price: RM{original_price:.2f}", ln=True)
+    pdf.cell(0, 10, txt=f"Discounted Price: RM{total_price:.2f}", ln=True)
+    pdf.ln(20)
 
-    # Footer
-    c.setFont("Helvetica-Oblique", 10)
-    c.drawString(200, 50, "Thank you for your purchase!")
-
+    # Invoice footer
+    pdf.set_font("Arial", size=10)
+    pdf.cell(0, 10, txt="Thank you for your purchase!", ln=True, align="C")
+    
     # Save the PDF
-    c.save()
+    pdf.output(invoice_name)
+    
+    return invoice_name  # Return the valid path
 
-    return invoice_name
 def display_payment_page(username, order_details, total_price, branch, payment_method, booking_number, prep_time):
     st.title("Payment Page")
     st.write(f"Payment Method: **{payment_method}**")
