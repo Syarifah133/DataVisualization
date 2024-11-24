@@ -83,7 +83,7 @@ def display_cust_sidebar(username):
         st.title("Welcome to DeeVee Hiho!")
         st.write(
             """
-            At DeeVee Heehoo, we aim to deliver a superior coffee experience. 
+            At DeeVee Hiho, we aim to deliver a superior coffee experience. 
             Whether you're looking for a cozy spot to relax, a quick coffee to-go, 
             or a place to connect with others, we're here to make your day better.
 

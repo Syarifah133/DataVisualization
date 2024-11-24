@@ -5,18 +5,7 @@ from datetime import datetime
 from utils import save_inventory, check_low_inventory, max_stock, inventory
 from display_sidebar import add_notification
 
-# Function to read the orders from the CSV file
-def read_order_data():
-    file_path = 'orders.csv'  # Adjust the path to where the order CSV is located
-    if os.path.exists(file_path):
-        orders = pd.read_csv(file_path)
-        return orders
-    else:
-        st.error("Order file 'orders.csv' not found!")
-        return pd.DataFrame()  # Return empty DataFrame if the file doesn't exist
-
 normal_stock_msg = "No notifications"
-
 def update_inventory_after_sale(sale_items):
     """
     Update inventory based on items sold.
@@ -32,7 +21,6 @@ def update_inventory_after_sale(sale_items):
     save_inventory(inventory)
     st.success("Inventory updated after sale.")
     st.rerun()
-    
     # Recalculate low stock items after sale update
     low_stock_items = [
         item for item, amount in updated_inventory.items()
@@ -40,85 +28,20 @@ def update_inventory_after_sale(sale_items):
     ]
 
     if low_stock_items:
+        
         # Send notification for low-stock items
         low_stock_msg = "Low Stock Alert: The following items need restocking: " + ", ".join(
             [item.capitalize() for item in low_stock_items]
         )
         add_notification('admin', low_stock_msg)
     else:
+        
         add_notification('admin', normal_stock_msg)
 
     # Update session state for low stock items
     st.session_state.low_stock_items = low_stock_items
 
-menu = {
-    'Americano': {'Coffee Beans': 20, 'Cups': 1},
-    'Cappuccino': {'Coffee Beans': 20, 'Milk': 30, 'Cups': 1},
-    'Latte': {'Coffee Beans': 20, 'Milk': 40, 'Cups': 1},
-    'Caramel Macchiato': {'Coffee Beans': 20, 'Milk': 40, 'Sugar': 10, 'Cups': 1},
-}
 
-def update_inventory_from_orders():
-    """
-    Update inventory based on the latest orders from 'orders.csv'.
-    """
-    orders_data = read_order_data()
-    
-    if not orders_data.empty:
-        # Create a dictionary to store quantities ordered per coffee type
-        sale_items = {}
-
-        for _, order in orders_data.iterrows():
-            coffee_type = order['Coffee Type']
-            quantity = 1  # Each order row is considered 1 item sold
-            if coffee_type in sale_items:
-                sale_items[coffee_type] += quantity
-            else:
-                sale_items[coffee_type] = quantity
-
-        # Now update the inventory based on the sale_items and menu
-        update_inventory_after_sale_using_menu(sale_items)
-    else:
-        st.warning("No orders found to update inventory.")
-
-def update_inventory_after_sale_using_menu(sale_items):
-    """
-    Update inventory based on the items sold and their ingredients from the menu.
-    sale_items: A dictionary containing items and their quantities sold.
-    """
-    updated_inventory = inventory.copy()
-
-    # Loop through each coffee type and its sale quantity
-    for coffee_type, quantity_sold in sale_items.items():
-        if coffee_type in menu:
-            # Loop through the ingredients of the coffee type
-            for ingredient, amount_per_item in menu[coffee_type].items():
-                total_amount_used = amount_per_item * quantity_sold
-                if ingredient in updated_inventory:
-                    updated_inventory[ingredient] = max(updated_inventory[ingredient] - total_amount_used, 0)  # Prevent negative stock
-
-    inventory.update(updated_inventory)
-    save_inventory(inventory)
-    st.success("Inventory updated after sale using menu ingredients.")
-    st.rerun()
-
-    # Recalculate low stock items after sale update
-    low_stock_items = [
-        item for item, amount in updated_inventory.items()
-        if amount <= 0.2 * max_stock.get(item, 0)
-    ]
-
-    if low_stock_items:
-        # Send notification for low-stock items
-        low_stock_msg = "Low Stock Alert: The following items need restocking: " + ", ".join(
-            [item.capitalize() for item in low_stock_items]
-        )
-        add_notification('admin', low_stock_msg)
-    else:
-        add_notification('admin', normal_stock_msg)
-
-    # Update session state for low stock items
-    st.session_state.low_stock_items = low_stock_items
 
 def display_inventory_management():
     """
@@ -204,9 +127,6 @@ def display_inventory_management():
         st.success("Inventory updated successfully.")
         st.rerun()  # Refresh to show updated inventory
     
-    if st.button("Update Inventory After New Orders"):
-        update_inventory_from_orders()
-
     # Sale Integration
     st.subheader("Update Inventory After Sale")
     sale_items = {}
