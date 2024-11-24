@@ -39,7 +39,7 @@ def display_analytics_dashboard():
 
     # Display the appropriate section based on page option
     if page_option == 'Sales Trends':
-        st.subheader("Sales Trends")
+        st.subheader("Current Sales Trends")
 
         # Get current date and time data
         today = datetime.today().date()
@@ -48,40 +48,41 @@ def display_analytics_dashboard():
         orders_df['Week'] = orders_df['Order Time'].dt.to_period('W')
         orders_df['Month'] = orders_df['Order Time'].dt.to_period('M')
 
-        # User selects grouping option for the sales data
-        group_option = st.selectbox("Select Grouping", ['Hourly', 'Daily', 'Weekly', 'Monthly'])
+        # Hourly sales data
+        sales_by_hour = orders_df.groupby('Hour').agg(Quantity=('Price', 'count'), Revenue=('Price', 'sum'))
 
-        if group_option == 'Hourly':
-            # Group by Hour
-            sales_by_hour = orders_df.groupby('Hour').agg(Quantity=('Price', 'count'), Revenue=('Price', 'sum'))
-            st.subheader("Sales Trend (Hourly)")
-            st.write(f"**Hourly Sales**: Total Revenue Today: RM {sales_by_hour['Revenue'].sum():,.2f}")
-            st.dataframe(sales_by_hour)
-            st.line_chart(sales_by_hour)
+        # Display Hourly sales statistics
+        st.subheader("Sales Trend (Hourly)")
+        st.write(f"**Hourly Sales**: Total Revenue Today: RM {sales_by_hour['Revenue'].sum():,.2f}")
+        st.dataframe(sales_by_hour)
+        st.line_chart(sales_by_hour)
 
-        elif group_option == 'Daily':
-            # Group by Date
-            sales_by_date = orders_df.groupby('Date').agg(Quantity=('Price', 'count'), Revenue=('Price', 'sum'))
-            st.subheader("Sales Trend (Daily)")
-            st.write(f"**Daily Sales**: Total Revenue Today: RM {sales_by_date['Revenue'].sum():,.2f}")
-            st.dataframe(sales_by_date)
-            st.line_chart(sales_by_date)
+        # Daily sales data
+        sales_by_date = orders_df.groupby('Date').agg(Quantity=('Price', 'count'), Revenue=('Price', 'sum'))
 
-        elif group_option == 'Weekly':
-            # Group by Week
-            sales_by_week = orders_df.groupby('Week').agg(Quantity=('Price', 'count'), Revenue=('Price', 'sum'))
-            st.subheader("Sales Trend (Weekly)")
-            st.write(f"**Weekly Sales**: Total Revenue: RM {sales_by_week['Revenue'].sum():,.2f}")
-            st.dataframe(sales_by_week)
-            st.line_chart(sales_by_week['Revenue'])
+        # Display Daily sales statistics
+        st.subheader("Sales Trend (Daily)")
+        st.write(f"**Daily Sales**: Total Revenue Today: RM {sales_by_date['Revenue'].sum():,.2f}")
+        st.dataframe(sales_by_date)
+        st.line_chart(sales_by_date)
 
-        elif group_option == 'Monthly':
-            # Group by Month
-            sales_by_month = orders_df.groupby('Month').agg(Quantity=('Price', 'count'), Revenue=('Price', 'sum'))
-            st.subheader("Sales Trend (Monthly)")
-            st.write(f"**Monthly Sales**: Total Revenue: RM {sales_by_month['Revenue'].sum():,.2f}")
-            st.dataframe(sales_by_month)
-            st.line_chart(sales_by_month['Revenue'])
+        # Weekly sales data
+        sales_by_week = orders_df.groupby('Week').agg(Quantity=('Price', 'count'), Revenue=('Price', 'sum'))
+
+        # Display Weekly sales statistics
+        st.subheader("Sales Trend (Weekly)")
+        st.write(f"**Weekly Sales**: Total Revenue: RM {sales_by_week['Revenue'].sum():,.2f}")
+        st.dataframe(sales_by_week)
+        st.line_chart(sales_by_week['Revenue'])
+
+        # Monthly sales data
+        sales_by_month = orders_df.groupby('Month').agg(Quantity=('Price', 'count'), Revenue=('Price', 'sum'))
+
+        # Display Monthly sales statistics
+        st.subheader("Sales Trend (Monthly)")
+        st.write(f"**Monthly Sales**: Total Revenue: RM {sales_by_month['Revenue'].sum():,.2f}")
+        st.dataframe(sales_by_month)
+        st.line_chart(sales_by_month['Revenue'])
 
     elif page_option == 'Inventory Health':
         st.subheader("Inventory Health Check")
