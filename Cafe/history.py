@@ -13,19 +13,8 @@ def display_order_history():
         st.warning("No order history found.")
         return
 
-    # Check columns in orders_df to debug
-    st.write("Columns in orders.csv:", orders_df.columns)
-
     # Load feedback.csv (if it exists)
     feedback_df = pd.read_csv("Cafe/feedback.csv") if os.path.isfile("Cafe/feedback.csv") else pd.DataFrame()
-
-    # Check columns in feedback_df to debug
-    st.write("Columns in feedback.csv:", feedback_df.columns)
-
-    # Ensure 'Username' exists in orders_df
-    if 'Username' not in orders_df.columns:
-        st.warning("The 'Username' column is missing in the orders data.")
-        return
 
     username = st.session_state.get("username", "Guest")
     user_orders = orders_df[orders_df["Username"] == username]
@@ -50,7 +39,7 @@ def display_order_history():
 
             # Feedback Section
             existing_feedback = feedback_df[
-                (feedback_df["Username"] == username) & 
+                (feedback_df["Username"] == username) &
                 (feedback_df["Booking Number"] == order["Booking Number"])
             ]
 
@@ -97,4 +86,3 @@ def display_order_history():
     # Additional Improvements
     st.write("---")
     st.info("**Your feedback helps us improve our service. Thank you!**")
-
