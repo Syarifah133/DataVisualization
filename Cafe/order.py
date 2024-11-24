@@ -8,8 +8,8 @@ from payment import display_payment_page
 
 # Function to load and filter active coupons
 def load_active_coupons(username):
-    if os.path.isfile('coupons.csv'):
-        coupons_df = pd.read_csv('coupons.csv')
+    if os.path.isfile('Cafe/coupons.csv'):
+        coupons_df = pd.read_csv('Cafe/coupons.csv')
     else:
         # Create an empty DataFrame if file doesn't exist
         coupons_df = pd.DataFrame(columns=["Coupon Code", "Discount (%)", "Expiration Date", "Active", "Username"])
@@ -30,7 +30,7 @@ def save_order_to_csv(order):
         df.to_csv('orders.csv', index=False)
     else:
         df = pd.DataFrame([order])
-        df.to_csv('orders.csv', mode='a', header=False, index=False)
+        df.to_csv('Cafe/orders.csv', mode='a', header=False, index=False)
 
 # Function to resize images
 def resize_image(image_path, size=(150, 150)):
