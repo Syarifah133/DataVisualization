@@ -74,16 +74,15 @@ def add_notification(username, notification_msg):
 # Function to display the customer sidebar with navigation and notifications
 def display_cust_sidebar(username):
     st.sidebar.title("Navigation")
-    page = st.sidebar.selectbox("Go to", ["Homepage", "Order", "History"], key=f"nav_{username}")
+    page = st.sidebar.selectbox("Go to", ["About Us", "Homepage", "Order", "History"], key=f"nav_{username}")
     st.sidebar.markdown("<hr>", unsafe_allow_html=True)
     display_user_notifications(username)
-
-    # Add "About Us" section in the sidebar
-    with st.sidebar.expander("About Us"):
+    
+     # Add "About Us" section in the sidebar
+    if page == "About Us":
+        st.title("Welcome to DeeVee Hiho!")
         st.write(
             """
-            **Welcome to DeeVee Hiho!**
-
             At DeeVee Heehoo, we aim to deliver a superior coffee experience. 
             Whether you're looking for a cozy spot to relax, a quick coffee to-go, 
             or a place to connect with others, we're here to make your day better.
@@ -93,10 +92,21 @@ def display_cust_sidebar(username):
 
             ### Our Vision:
             Creating connections one cup at a time.
+            
+            ### Meet Our Team:
+            At DeeVee Hiho, our talented team is dedicated to ensuring that 
+            every customer enjoys a top-notch coffee experience. Here’s a quick introduction to 
+            the hard-working team members behind our café project:
+            - Nurul Nur Syazwani binti Azriza (20001471)
+            - Syarifah Nabilah binti Syed Abdul Rahman (20001090)
+            - Alfina Aisyah Binti Abdullah (21001143)
+            - Ainin Sofiya Binti Mohd Edyamin (20001438)
+            - Muamar Bin Masri (22003363)
             """
         )
-
     return page
+
+
 
 # Function to display admin notifications and manage them
 def display_admin_notifications(username):

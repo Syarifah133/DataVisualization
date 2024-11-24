@@ -1,67 +1,13 @@
 Username,Coffee Type,Size,Ice,Sugar,Add-ons,Price,Booking Number,Preparation Time (min),Order Time,Branch,Status,Current Status,Method
-nora,Cappuccino,Medium,More,Less,Whipped Cream,7.0,3125,9,2024-09-11 14:42:56,Manjung,Preparing,Preparing,FPX
-farah,Latte,Small,Hot,More,,7.5,1943,14,2024-09-12 09:30:02,Seri Iskandar,Preparing,Preparing,FPX
-zain,Caramel Macchiato,Large,Hot,No,,8.0,8623,10,2024-09-13 13:10:50,Seri Iskandar,Preparing,Preparing,FPX
-amir,Americano,Medium,Less,No,Whipped Cream,6.0,6389,8,2024-09-14 16:45:22,Ipoh,Preparing,Preparing,FPX
-siti,Cappuccino,Small,Hot,More,Milk,7.0,1247,7,2024-09-15 10:22:17,Seri Iskandar,Preparing,Preparing,FPX
-ali,Latte,Medium,Less,No,Milk,7.5,7249,9,2024-09-16 11:50:12,Manjung,Preparing,Preparing,FPX
-syarifah,Americano,Small,Hot,No,Whipped Cream,6.0,3197,8,2024-11-24 00:22:26,Seri Iskandar,Preparing,FPX,
-syarifah,Americano,Small,Hot,No,,6.0,7566,9,2024-11-24 00:24:19,Seri Iskandar,Preparing,FPX,
-siti,Americano,Small,Hot,No,,6.0,6866,6,2024-11-24 00:24:50,Seri Iskandar,Preparing,Ready for Pickup,
-siti,Americano,Small,Hot,No,,6.0,2049,8,2024-11-24 00:25:22,Seri Iskandar,Preparing,FPX,
-siti,Americano,Small,Hot,No,,6.0,1859,5,2024-11-24 00:28:02,Seri Iskandar,Preparing,FPX,
-siti,Americano,Small,Hot,No,,6.0,9281,5,2024-11-24 00:28:09,Seri Iskandar,Preparing,FPX,
-siti,Americano,Small,Hot,No,,6.0,7915,10,2024-11-24 00:30:23,Seri Iskandar,Preparing,FPX,5%-8026
-siti,Americano,Small,Hot,No,,6.0,9358,12,2024-11-24 00:32:21,Seri Iskandar,Preparing,FPX,5%-3467
-siti,Americano,Small,Hot,No,,6.0,2052,9,2024-11-24 00:35:18,Seri Iskandar,Preparing,FPX,5%-7592
-siti,Americano,Small,Hot,No,,6.0,3257,6,2024-11-24 00:36:39,Seri Iskandar,Preparing,FPX,5%-3270
-siti,Americano,Small,Hot,No,,6.0,6272,14,2024-11-24 00:38:15,Seri Iskandar,Preparing,FPX,No Coupons Available
-siti,Americano,Small,Hot,No,,6.0,6455,5,2024-11-24 00:38:25,Seri Iskandar,Preparing,FPX,5%-9897
-siti,Americano,Small,Hot,No,,6.0,7684,9,2024-11-24 00:39:47,Seri Iskandar,Preparing,FPX,5%-5766
-siti,Americano,Small,Hot,No,,6.0,3467,13,2024-11-24 00:47:00,Seri Iskandar,Preparing,FPX,No Coupons Available
-siti,Americano,Small,Hot,No,,6.0,5967,15,2024-11-24 00:47:11,Seri Iskandar,Preparing,FPX,5%-4153
-siti,Americano,Small,Hot,No,,6.0,7939,7,2024-11-24 00:53:48,Seri Iskandar,Preparing,FPX,5%-1348
-siti,Americano,Small,Hot,No,,6.0,3773,5,2024-11-24 01:02:42,Seri Iskandar,Preparing,FPX,5%-2391
-siti,Americano,Small,Hot,No,,6.0,3263,8,2024-11-24 01:03:35,Seri Iskandar,Preparing,FPX,No Coupons Available
-siti,Americano,Small,Hot,No,,6.0,4428,11,2024-11-24 01:03:51,Seri Iskandar,Preparing,FPX,5%-4055
-siti,Americano,Small,Hot,No,,6.0,3067,6,2024-11-24 01:05:31,Seri Iskandar,Preparing,FPX,No Coupons Available
-siti,Americano,Small,Hot,No,,6.0,7704,14,2024-11-24 01:06:30,Seri Iskandar,Preparing,FPX,5%-6360
-siti,Americano,Small,Hot,No,,6.0,2740,15,2024-11-24 01:06:39,Seri Iskandar,Preparing,FPX,No Coupons Available
-siti,Americano,Small,Hot,No,,6.0,8618,5,2024-11-24 01:07:33,Seri Iskandar,Preparing,FPX,5%-9758
-siti,Americano,Small,Hot,No,,6.0,5762,9,2024-11-24 01:08:34,Seri Iskandar,Preparing,FPX,5%-8119
-siti,Americano,Small,Hot,No,,6.0,9023,8,2024-11-24 01:09:29,Seri Iskandar,Preparing,FPX,No Coupons Available
-siti,Americano,Small,Hot,No,,6.0,4456,14,2024-11-24 01:11:57,Seri Iskandar,Preparing,FPX,5%-1016
-siti,Americano,Small,Hot,No,,6.0,6398,14,2024-11-24 01:13:46,Seri Iskandar,Preparing,FPX,5%-1889
-siti,Americano,Small,Hot,No,,6.0,6286,5,2024-11-24 01:14:28,Seri Iskandar,Preparing,FPX,No Coupons Available
-siti,Caramel Macchiato,Small,Hot,No,,8.0,8911,8,2024-11-24 01:14:42,Seri Iskandar,Preparing,FPX,5%-5648
-siti,Americano,Small,Hot,No,,6.0,2627,13,2024-11-24 01:15:35,Seri Iskandar,Preparing,Credit/Debit Card,5%-2747
-siti,Caramel Macchiato,Small,Hot,No,,8.0,3817,5,2024-11-24 01:16:15,Seri Iskandar,Preparing,FPX,No Coupons Available
-siti,Americano,Small,Hot,No,,6.0,3223,11,2024-11-24 01:17:33,Seri Iskandar,Preparing,FPX,5%-9814
-siti,Americano,Small,Hot,No,,6.0,3594,15,2024-11-24 01:18:42,Seri Iskandar,Preparing,FPX,No Coupons Available
-siti,Americano,Small,Hot,No,,6.0,7407,5,2024-11-24 01:19:29,Seri Iskandar,Preparing,FPX,5%-4374
-siti,Caramel Macchiato,Small,Hot,No,,8.0,7319,8,2024-11-24 01:19:44,Seri Iskandar,Preparing,FPX,5%-4374
-siti,Americano,Small,Hot,No,,6.0,4203,12,2024-11-24 01:20:08,Seri Iskandar,Preparing,FPX,5%-9350
-siti,Americano,Small,Hot,No,,6.0,4495,14,2024-11-24 01:20:17,Seri Iskandar,Preparing,FPX,No Coupons Available
-siti,Americano,Small,Hot,No,,6.0,7800,5,2024-11-24 01:21:21,Seri Iskandar,Preparing,FPX,5%-8443
-siti,Americano,Small,Hot,No,,6.0,6507,10,2024-11-24 01:22:46,Seri Iskandar,Preparing,FPX,5%-1469
-siti,Americano,Small,Hot,No,,6.0,9251,15,2024-11-24 01:24:04,Seri Iskandar,Preparing,FPX,5%-2862
-siti,Americano,Small,Hot,No,,6.0,3192,10,2024-11-24 01:24:46,Seri Iskandar,Preparing,FPX,5%-9639
-siti,Americano,Small,Hot,No,,6.0,9795,15,2024-11-24 01:24:55,Seri Iskandar,Preparing,FPX,5%-9639
-siti,Americano,Small,Hot,No,,6.0,3485,6,2024-11-24 01:26:36,Seri Iskandar,Preparing,FPX,5%-4109
-siti,Americano,Small,Hot,No,,6.0,3121,15,2024-11-24 01:27:10,Seri Iskandar,Preparing,FPX,No Coupons Available
-syarifah,Americano,Small,Hot,No,,6.0,4679,5,2024-11-24 02:45:33,Seri Iskandar,Preparing,FPX,No Coupons Available
-syarifah,Americano,Small,Hot,No,,6.0,8403,15,2024-11-24 02:54:59,Seri Iskandar,Preparing,FPX,
-syarifah,Americano,Small,Hot,No,,6.0,1349,14,2024-11-24 02:55:53,Seri Iskandar,Preparing,FPX,
-syarifah,Americano,Small,Hot,No,,6.0,9007,12,2024-11-24 03:05:39,Seri Iskandar,Preparing,FPX,
-syarifah,Americano,Small,Hot,No,,6.0,4161,6,2024-11-24 03:12:11,Seri Iskandar,Preparing,FPX,5%-4175
-syarifah,Americano,Small,Hot,No,,6.0,8021,5,2024-11-24 03:12:50,Seri Iskandar,Preparing,FPX,3131
-syarifah,Americano,Small,Hot,No,,6.0,6041,7,2024-11-24 03:14:09,Seri Iskandar,Preparing,FPX,TEST11
-syarifah,Americano,Small,Hot,No,,6.0,3819,7,2024-11-24 03:17:09,Seri Iskandar,Preparing,FPX,No Coupons Available
-syarifah,Americano,Small,Hot,No,,6.0,4437,15,2024-11-24 03:17:22,Seri Iskandar,Preparing,FPX,No Coupons Available
-syarifah,Americano,Small,Hot,No,,6.0,8639,14,2024-11-24 03:17:28,Seri Iskandar,Preparing,FPX,No Coupons Available
-syarifah,Americano,Small,Hot,No,,6.0,5304,11,2024-11-24 03:18:07,Seri Iskandar,Preparing,FPX,
-syarifah,Americano,Small,Hot,No,,6.0,6335,5,2024-11-24 03:18:57,Seri Iskandar,Preparing,FPX,5%-2446
-syarifah,Americano,Small,Hot,No,,6.0,1758,12,2024-11-24 03:20:28,Seri Iskandar,Preparing,FPX,5%-5955
-syarifah,Americano,Small,Hot,No,,6.0,7538,5,2024-11-24 03:21:41,Seri Iskandar,Preparing,FPX,5%-5843
-syarifah,Americano,Large,Hot,No,,6.0,4318,5,2024-11-24 03:23:25,Seri Iskandar,Preparing,FPX,5%-5843
-syarifah,Americano,Small,Hot,No,,6.0,2420,9,2024-11-24 03:24:03,Seri Iskandar,Preparing,FPX,5%-1100
+nora,Cappuccino,Medium,More,Less,Whipped Cream,7,3125,9,11/9/2024 14:42,Manjung,Preparing,Preparing,FPX
+farah,Latte,Small,Hot,More,,7.5,1943,14,12/9/2024 9:30,Seri Iskandar,Preparing,Preparing,FPX
+zain,Caramel Macchiato,Large,Hot,No,,8,8623,10,13/9/2024 13:10,Seri Iskandar,Preparing,Preparing,FPX
+amir,Americano,Medium,Less,No,Whipped Cream,6,6389,8,14/9/2024 16:45,Ipoh,Preparing,Preparing,FPX
+siti,Cappuccino,Small,Hot,More,Milk,7,1247,7,15/9/2024 10:22,Seri Iskandar,Preparing,Preparing,FPX
+ali,Latte,Medium,Less,No,Milk,7.5,7249,9,16/9/2024 11:50,Manjung,Preparing,Preparing,FPX
+siti,Americano,Small,Hot,No,,6,9795,15,24/11/2024 1:24,Seri Iskandar,Preparing,FPX,5%-9639
+siti,Americano,Small,Hot,No,,6,3485,6,24/11/2024 1:26,Seri Iskandar,Preparing,FPX,5%-4109
+siti,Americano,Small,Hot,No,,6,3121,15,24/11/2024 1:27,Seri Iskandar,Preparing,FPX,No Coupons Available
+syarifah,Americano,Large,Hot,No,,6,4318,5,24/11/2024 3:23,Seri Iskandar,Preparing,FPX,5%-5843
+syarifah,Americano,Small,Hot,No,,6,2420,9,24/11/2024 3:24,Seri Iskandar,Preparing,FPX,5%-1100
+chop,Latte,Small,Hot,No,"Milk, Whipped Cream",7.5,7934,5,24/11/2024 12:44,Seri Iskandar,Preparing,Ready for Pickup,No Coupons Available
