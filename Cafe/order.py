@@ -25,9 +25,9 @@ def load_active_coupons(username):
 
 # Function to save orders to CSV
 def save_order_to_csv(order):
-    if not os.path.isfile('orders.csv'):
+    if not os.path.isfile('Cafe/orders.csv'):
         df = pd.DataFrame([order])
-        df.to_csv('orders.csv', index=False)
+        df.to_csv('Cafe/orders.csv', index=False)
     else:
         df = pd.DataFrame([order])
         df.to_csv('Cafe/orders.csv', mode='a', header=False, index=False)
@@ -47,19 +47,19 @@ def display_order_page(username):
     menu = {
         'Americano': {
             'price': 6.00,
-            'image': 'americano.jpg'
+            'image': 'Cafe/americano.jpg'
         },
         'Cappuccino': {
             'price': 7.00,
-            'image': 'cappucino.jpg'
+            'image': 'Cafe/cappucino.jpg'
         },
         'Latte': {
             'price': 7.50,
-            'image': 'latte.jpg'
+            'image': 'Cafe/latte.jpg'
         },
         'Caramel Macchiato': {
             'price': 8.00,
-            'image': 'caramel.jpg'
+            'image': 'Cafe/caramel.jpg'
         }
     }
 

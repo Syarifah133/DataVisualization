@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 
-inventory_file = 'inventory.csv'
+inventory_file = 'Cafe/inventory.csv'
 
 # Load inventory from CSV
 if os.path.isfile(inventory_file):

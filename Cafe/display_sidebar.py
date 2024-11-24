@@ -4,7 +4,7 @@ from datetime import datetime
 import streamlit as st
 
 # Path to the CSV file that stores notifications
-NOTIFICATION_FILE = "user_notifications.csv"
+NOTIFICATION_FILE = "Cafe/user_notifications.csv"
 
 # Function to read notifications from CSV
 def read_notifications():

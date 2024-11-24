@@ -3,7 +3,7 @@ import pandas as pd
 import streamlit as st
 from display_sidebar import add_notification
 
-orders_file = 'orders.csv'
+orders_file = 'Cafe/orders.csv'
 
 # Function to display order history and allow updates
 def display_order_history(username):  # Accept the username as a parameter

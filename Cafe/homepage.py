@@ -15,8 +15,8 @@ def logout():
     st.rerun()
 # Function to load loyalty data
 def load_loyalty_data():
-    if os.path.isfile('loyalty_points.csv'):
-        return pd.read_csv('loyalty_points.csv')
+    if os.path.isfile('Cafe/loyalty_points.csv'):
+        return pd.read_csv('Cafe/loyalty_points.csv')
     return pd.DataFrame(columns=['Username', 'Total Price', 'Redeem', 'Loyalty', 'Last Voucher'])
 
 
@@ -25,8 +25,8 @@ def update_loyalty_points():
     loyalty_df = load_loyalty_data()
 
     # Load orders and calculate total spent by the user
-    if os.path.isfile('orders.csv'):
-        orders_df = pd.read_csv('orders.csv')
+    if os.path.isfile('Cafe/orders.csv'):
+        orders_df = pd.read_csv('Cafe/orders.csv')
         total_spent = orders_df[orders_df['Username'] == st.session_state['username']]['Price'].sum()
     else:
         total_spent = 0
@@ -53,7 +53,7 @@ def update_loyalty_points():
     st.session_state["loyalty_points"] = loyalty_df[loyalty_df['Username'] == st.session_state['username']]['Loyalty'].iloc[0]
 
     # Save the updated loyalty data
-    loyalty_df.to_csv('loyalty_points.csv', index=False)
+    loyalty_df.to_csv('Cafe/loyalty_points.csv', index=False)
 
 
 # Function to save the redeemed voucher as an active coupon
@@ -135,7 +135,7 @@ def redeem_voucher():
                 loyalty_df = pd.concat([loyalty_df, pd.DataFrame([new_record])], ignore_index=True)
 
             # Save the updated loyalty data
-            loyalty_df.to_csv('loyalty_points.csv', index=False)
+            loyalty_df.to_csv('Cafe/loyalty_points.csv', index=False)
 
             # Save the voucher as an active coupon
             save_coupon(voucher_code, discount, st.session_state['username'])

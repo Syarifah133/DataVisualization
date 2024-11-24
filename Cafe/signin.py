@@ -2,7 +2,7 @@ import bcrypt
 import pandas as pd
 import streamlit as st
 
-USER_DB = "users.csv"  # Path to the user database
+USER_DB = "Cafe/users.csv"  # Path to the user database
 
 # Load user data
 def load_user_data():

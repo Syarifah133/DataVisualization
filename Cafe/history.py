@@ -7,8 +7,8 @@ def display_order_history():
     st.title("Order History")
 
     # Load orders.csv
-    if os.path.isfile("orders.csv"):
-        orders_df = pd.read_csv("orders.csv")
+    if os.path.isfile("Cafe/orders.csv"):
+        orders_df = pd.read_csv("Cafe/orders.csv")
     else:
         st.warning("No order history found.")
         return

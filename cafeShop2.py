@@ -24,14 +24,14 @@ placeholder = st.empty()
 # Function to save orders to CSV
 def save_order_to_csv(order):
     # Check if the orders CSV file exists
-    if not os.path.isfile('orders.csv'):
+    if not os.path.isfile('Cafe/orders.csv'):
         # Create a new CSV file and add headers
         df = pd.DataFrame([order])
-        df.to_csv('orders.csv', index=False)
+        df.to_csv('Cafe/orders.csv', index=False)
     else:
         # Append to existing CSV file
         df = pd.DataFrame([order])
-        df.to_csv('orders.csv', mode='a', header=False, index=False)
+        df.to_csv('Cafe/orders.csv', mode='a', header=False, index=False)
 
 # Landing Page
 with placeholder.container():
@@ -131,8 +131,8 @@ if st.session_state.user_type == 'admin':
             st.title("Order History")
 
             # Load order history from CSV
-            if os.path.isfile('orders.csv'):
-                order_history = pd.read_csv('orders.csv', dtype={'Booking Number': str})
+            if os.path.isfile('Cafe/orders.csv'):
+                order_history = pd.read_csv('Cafe/orders.csv', dtype={'Booking Number': str})
                 
                 # Display orders
                 st.write(order_history)
@@ -142,7 +142,7 @@ if st.session_state.user_type == 'admin':
                     delete_order = st.selectbox("Select Booking Number to Delete", order_history['Booking Number'].unique())
                     if st.button("Delete Order"):
                         order_history = order_history[order_history['Booking Number'] != delete_order]
-                        order_history.to_csv('orders.csv', index=False)
+                        order_history.to_csv('Cafe/orders.csv', index=False)
                         st.success(f"Order with Booking Number {delete_order} has been deleted.")
             else:
                 st.info("No orders placed yet.")

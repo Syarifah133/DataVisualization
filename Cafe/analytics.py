@@ -4,7 +4,7 @@ import streamlit as st
 from datetime import datetime
 from utils import save_inventory, check_low_inventory, max_stock, inventory
 
-orders_file = 'orders.csv'
+orders_file = 'Cafe/orders.csv'
 
 # Load orders from the CSV file
 def load_orders():

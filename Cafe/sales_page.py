@@ -11,7 +11,7 @@ coffee_costs = {
     'Caramel Macchiato': 4.5  # Cost per unit for CM
 }
 
-orders_file = 'orders.csv'
+orders_file = 'Cafe/orders.csv'
 
 def display_sales_reporting():  
     st.title("Sales Reporting")

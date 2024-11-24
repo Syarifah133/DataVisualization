@@ -2,7 +2,7 @@ import pandas as pd
 import streamlit as st
 import bcrypt
 
-USER_DB = "users.csv"  # Path to the user database
+USER_DB = "Cafe/users.csv"  # Path to the user database
 
 def hash_password(password):
     # Generate a hashed password.
