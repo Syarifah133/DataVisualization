@@ -1,4 +1,0 @@
-streamlit
-fpdf
-bcrypt
-pandas
