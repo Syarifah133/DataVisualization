@@ -22,7 +22,13 @@ def display_sales_reporting():
 
     # Load Orders Data
     orders_df = pd.read_csv(orders_file, parse_dates=['Order Time'])
-
+    
+    # Explicitly convert 'Order Time' to datetime
+    orders_df['Order Time'] = pd.to_datetime(orders_df['Order Time'], errors='coerce')
+    
+    # Drop rows with invalid 'Order Time' values (if any)
+    orders_df = orders_df.dropna(subset=['Order Time'])
+    
     # Adding date-based columns for grouping
     orders_df['Date'] = orders_df['Order Time'].dt.date
     orders_df['Week'] = orders_df['Order Time'].dt.to_period('W').dt.start_time
