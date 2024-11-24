@@ -6,11 +6,14 @@ from utils import save_inventory, check_low_inventory, max_stock, inventory
 
 orders_file = 'Cafe/orders.csv'
 
-# Load orders from the CSV file
 def load_orders():
     if os.path.isfile(orders_file):
-        return pd.read_csv(orders_file, parse_dates=['Order Time'])
+        # Load CSV and explicitly convert 'Order Time' to datetime
+        orders_df = pd.read_csv(orders_file)
+        orders_df['Order Time'] = pd.to_datetime(orders_df['Order Time'], errors='coerce')  # Convert with error handling
+        return orders_df
     return pd.DataFrame()  # Empty dataframe if no orders found
+
 
 # Custom function to render a progress bar with color
 def colored_progress_bar(ratio, color):
