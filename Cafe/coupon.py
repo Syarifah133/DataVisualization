@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from datetime import date
 
-coupon_file = 'coupons.csv'
+coupon_file = 'Cafe/coupons.csv'
 
 # Function to load existing coupons
 def load_coupons():

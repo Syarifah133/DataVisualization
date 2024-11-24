@@ -59,8 +59,8 @@ def update_loyalty_points():
 # Function to save the redeemed voucher as an active coupon
 def save_coupon(voucher_code, discount, username):
     # Check if the coupons file exists
-    if os.path.isfile('coupons.csv'):
-        coupons_df = pd.read_csv('coupons.csv')
+    if os.path.isfile('Cafe/coupons.csv'):
+        coupons_df = pd.read_csv('Cafe/coupons.csv')
     else:
         coupons_df = pd.DataFrame(columns=["Coupon Code", "Discount (%)", "Expiration Date", "Active", "Username"])
 
@@ -78,7 +78,7 @@ def save_coupon(voucher_code, discount, username):
     coupons_df = pd.concat([coupons_df, pd.DataFrame([new_coupon])], ignore_index=True)
 
     # Save the updated coupons data
-    coupons_df.to_csv('coupons.csv', index=False)
+    coupons_df.to_csv('Cafe/coupons.csv', index=False)
 
 
 # Updated redeem_voucher function
@@ -150,8 +150,8 @@ def redeem_voucher():
 
 # Display active coupons
 def load_active_coupons(username):
-    if os.path.isfile('coupons.csv'):
-        coupons_df = pd.read_csv('coupons.csv')
+    if os.path.isfile('Cafe/coupons.csv'):
+        coupons_df = pd.read_csv('Cafe/coupons.csv')
     else:
         # Create an empty DataFrame if file doesn't exist
         coupons_df = pd.DataFrame(columns=["Coupon Code", "Discount (%)", "Expiration Date", "Active", "Username"])
@@ -166,8 +166,8 @@ def load_active_coupons(username):
     return active_coupons
 
 def load_past_coupons(username):
-    if os.path.isfile('coupons.csv'):
-        coupons_df = pd.read_csv('coupons.csv')
+    if os.path.isfile('Cafe/coupons.csv'):
+        coupons_df = pd.read_csv('Cafe/coupons.csv')
     else:
         # Create an empty DataFrame if file doesn't exist
         coupons_df = pd.DataFrame(columns=["Coupon Code", "Discount (%)", "Expiration Date", "Active", "Username"])
@@ -183,7 +183,7 @@ def load_past_coupons(username):
 
 
 def display_homepage():
-    coupons_df = pd.read_csv('coupons.csv')
+    coupons_df = pd.read_csv('Cafe/coupons.csv')
     if 'username' not in st.session_state:
         st.error("Please sign in to access this page.")
         return

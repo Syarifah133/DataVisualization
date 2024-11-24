@@ -9,8 +9,8 @@ from fpdf import FPDF
 
 # Display active coupons
 def load_active_coupons(username):
-    if os.path.isfile('coupons.csv'):
-        coupons_df = pd.read_csv('coupons.csv')
+    if os.path.isfile('Cafe/coupons.csv'):
+        coupons_df = pd.read_csv('Cafe/coupons.csv')
     else:
         # Create an empty DataFrame if file doesn't exist
         coupons_df = pd.DataFrame(columns=["Coupon Code", "Discount (%)", "Expiration Date", "Active", "Username"])
@@ -23,7 +23,7 @@ def load_active_coupons(username):
 
     
     return active_coupons
-def mark_coupon_as_used(coupon_code, file_path='coupons.csv'):
+def mark_coupon_as_used(coupon_code, file_path='Cafe/coupons.csv'):
     if os.path.isfile(file_path):
         coupons_df = pd.read_csv(file_path)
         if coupon_code in coupons_df['Coupon Code'].values:
